@@ -1,28 +1,39 @@
 <script setup lang="ts">
-import { shallowRef } from 'vue'
+  import AppBarItem from '@/layouts/components/AppBar/components/AppBarItem.vue'
+  import { constantRoutes } from '@/router'
+  import { isExternal } from '@/utils'
+  import path from 'path-browserify'
+  import { shallowRef } from 'vue'
+  const drawer = shallowRef(false)
 
-const drawer = shallowRef(false)
-const items = [
-  {
-    text: 'Dashboard',
-  },
-  {
-    text: 'Users',
-  },
-  {
-    text: 'Projects',
-  },
-  {
-    text: 'Settings',
-  },
-  {
-    text: 'Contact',
-  },
-]
+  const routes = constantRoutes
+  const checkItem = ref('Dashboard')
+
+  /**
+   * 解析路径
+   *
+   * @param routePath 路由路径 /user
+   */
+  function resolvePath (basePath:string, routePath: string) {
+    if (isExternal(routePath)) {
+      return routePath
+    }
+    if (isExternal(basePath)) {
+      return basePath
+    }
+
+    // 完整绝对路径 = 父级路径(/system) + 路由路径(/user)
+    const fullPath = path.resolve(basePath, routePath)
+    return fullPath
+  }
+
+  const activeChange = (name:string) => {
+    checkItem.value = name
+  }
 </script>
 
 <template>
-  <v-app-bar class="px-md-4" flat>
+  <v-app-bar class="px-md-8 border" flat>
     <template #prepend>
       <v-app-bar-nav-icon
         v-if="$vuetify.display.smAndDown"
@@ -40,26 +51,27 @@ const items = [
     </div>
 
     <template v-if="$vuetify.display.mdAndUp">
-      <v-btn
-        v-for="(item, i) in items"
-        :key="i"
-        :active="i === 0"
-        class="me-2 text-none"
-        slim
-        v-bind="item"
+      <AppBarItem
+        v-for="route in routes"
+        :key="route.path"
+        :active="checkItem"
+        :base-path="resolvePath('',route.path)"
+        :item="route"
+        @active-change="activeChange"
       />
+
     </template>
     <v-spacer />
     <v-text-field
-      prepend-inner-icon="fa:fas fa-search"
-      variant="solo-inverted"
-      max-width="300"
-      density="compact"
       :counter="5"
-      label="搜索文章"
+      density="compact"
       hide-details
+      label="搜索文章"
+      max-width="300"
+      prepend-inner-icon="fa:fas fa-search"
       required
-    ></v-text-field>
+      variant="solo-inverted"
+    />
 
     <template #append>
       <v-btn
