@@ -24,19 +24,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-  {
-    path: '/photo',
-    component: Layout,
-    redirect: '/photo/index',
-    name: 'Photo',
-    meta: { title: '照片墙' },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/pages/photo/index.vue'),
-      },
-    ],
-  },
+
   {
     path: '/category',
     component: Layout,
@@ -59,6 +47,19 @@ export const constantRoutes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: '/photo',
+    component: Layout,
+    redirect: '/photo/index',
+    name: 'Photo',
+    meta: { title: '照片墙' },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/photo/index.vue'),
+      },
+    ],
+  },
+  {
     path: '/link',
     component: Layout,
     redirect: '/link/home',
@@ -67,7 +68,19 @@ export const constantRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'home',
-        meta: { title: '分类1' },
+        component: () => import('@/pages/home/index.vue'),
+      },
+    ],
+  },
+  {
+    path: '/about',
+    component: Layout,
+    redirect: '/about/index',
+    name: 'About',
+    meta: { title: '关于本站' },
+    children: [
+      {
+        path: 'index',
         component: () => import('@/pages/home/index.vue'),
       },
     ],
