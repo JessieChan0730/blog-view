@@ -11,6 +11,7 @@ declare module 'vue' {
     Container: typeof import('./components/Container/index.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     HotBlog: typeof import('./components/HotBlog/index.vue')['default']
+    ImageWaterfall: typeof import('./components/ImageWaterfall/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TagsCloud: typeof import('./components/TagsCloud/index.vue')['default']
