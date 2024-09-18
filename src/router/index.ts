@@ -68,7 +68,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'home',
-        component: () => import('@/pages/home/index.vue'),
+        component: () => import('@/pages/link/index.vue'),
       },
     ],
   },
@@ -81,7 +81,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     children: [
       {
         path: 'index',
-        component: () => import('@/pages/home/index.vue'),
+        component: () => import('@/pages/about/index.vue'),
       },
     ],
   },
