@@ -103,9 +103,8 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+
   const routerStore = useRoutersStore()
-  // console.log(routerStore.getStatus() === RouterStatusEnum.INIT)
-  // console.log(routerStore.getStatus() === RouterStatusEnum.FINISH)
   if (routerStore.getStatus() === RouterStatusEnum.INIT) {
     await routerStore.generateRoutes()
     next({
@@ -116,6 +115,8 @@ router.beforeEach(async (to, from, next) => {
     next('/404')
   } else {
     // 路由加载完成，直接放行
+    let name = to.name ?? to.matched[0].name ?? ""
+    routerStore.setCheckPath(name)
     next()
   }
 })

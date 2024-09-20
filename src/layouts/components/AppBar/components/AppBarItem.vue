@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useRoutersStore } from '@/stores'
   import { isExternal } from '@/utils'
   import path from 'path-browserify'
   import { RouteRecordRaw } from 'vue-router'
@@ -13,8 +14,8 @@
       required: true,
     },
   })
-  // const routersStore = useRoutersStore()
-  // const activePath = routersStore.getActiveRouterPath()
+
+  const routersStore = useRoutersStore()
   const onlyOneChild = ref()
   const router = useRouter()
   /**
@@ -76,11 +77,14 @@
   }
 
   const checkPage = (path: string, name:string) => {
-    console.log(path)
     if (isExternal(path)) {
       return
     }
     router.push(path)
+  }
+
+  const isActive = (name:string)  => {
+    return   routersStore.getCheckPath() === name
   }
 </script>
 
@@ -91,7 +95,7 @@
       v-if="hasOneShowingChild(item.children, item as RouteRecordRaw) &&
         (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
         !item.meta?.alwaysShow && !item.meta.detail"
-      :active="false"
+      :active="isActive(onlyOneChild.name)"
       class="item"
       slim
       @click="checkPage(resolvePath(item.path),onlyOneChild.name)"
@@ -112,7 +116,7 @@
         <v-list-item
           v-for="child in item.children"
           :key="child.path"
-          :active="false"
+          :active="isActive(child.name)"
           :value="child.path"
         >
           <v-list-item-title @click="checkPage(resolvePath(child.path),child.name)">{{ child.meta.title }}</v-list-item-title>

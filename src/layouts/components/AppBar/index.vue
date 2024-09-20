@@ -8,9 +8,7 @@
   const drawer = shallowRef(false)
 
   const routersStore = useRoutersStore()
-
   const routes = ref<RouteRecordRaw[]>()
-  // const activepath = routersStore.getActiveRouterPath()
   onMounted(async () => {
     routes.value = routersStore.getRouters()
   })
@@ -32,9 +30,6 @@
     return fullPath
   }
 
-  // const activeChange = (name:string) => {
-  //   checkItem.value = name
-  // }
 </script>
 
 <template>

@@ -18,6 +18,13 @@ export const useRoutersStore = defineStore('routers', () => {
    */
   const isLoading = ref<RouterStatusEnum>(RouterStatusEnum.INIT)
 
+  /**
+   * 当前选中的路由
+   */
+
+  const checkPath = ref<string>()
+
+
   async function generateRoutes () {
     try {
       for (const route of constantRoutes) {
@@ -101,10 +108,20 @@ export const useRoutersStore = defineStore('routers', () => {
   function getRouters () {
     return routes.value
   }
+  function setCheckPath(path:string) {
+    checkPath.value = path
+  }
+
+  function getCheckPath () {
+    return checkPath.value
+  }
+
 
   return {
     generateRoutes,
     getStatus,
     getRouters,
+    setCheckPath,
+    getCheckPath,
   }
 })
