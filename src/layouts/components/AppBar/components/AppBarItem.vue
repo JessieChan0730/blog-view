@@ -12,17 +12,11 @@
       type: String,
       required: true,
     },
-    active: {
-      type: String,
-      required: true,
-    },
   })
-
-  const emit = defineEmits(['activeChange'])
-
+  // const routersStore = useRoutersStore()
+  // const activePath = routersStore.getActiveRouterPath()
   const onlyOneChild = ref()
   const router = useRouter()
-
   /**
    * 判断当前路由是否只有一个显示的子路由
    *
@@ -82,21 +76,22 @@
   }
 
   const checkPage = (path: string, name:string) => {
+    console.log(path)
     if (isExternal(path)) {
       return
     }
     router.push(path)
-    emit('activeChange', name)
   }
 </script>
 
 <template>
   <div v-if="!item.meta || !item.meta.hidden">
+    <!--只存在一个子路由-->
     <v-btn
       v-if="hasOneShowingChild(item.children, item as RouteRecordRaw) &&
         (!onlyOneChild.children || onlyOneChild.noShowingChildren) &&
-        !item.meta?.alwaysShow"
-      :active="active === onlyOneChild.name"
+        !item.meta?.alwaysShow && !item.meta.detail"
+      :active="false"
       class="item"
       slim
       @click="checkPage(resolvePath(item.path),onlyOneChild.name)"
@@ -117,7 +112,7 @@
         <v-list-item
           v-for="child in item.children"
           :key="child.path"
-          :active="active === child.name"
+          :active="false"
           :value="child.path"
         >
           <v-list-item-title @click="checkPage(resolvePath(child.path),child.name)">{{ child.meta.title }}</v-list-item-title>
@@ -125,8 +120,6 @@
       </v-list>
     </v-menu>
   </div>
-  <!--只存在一个子路由-->
-
 </template>
 
 <style scoped lang="scss">

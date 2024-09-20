@@ -1,14 +1,19 @@
 <script setup lang="ts">
   import AppBarItem from '@/layouts/components/AppBar/components/AppBarItem.vue'
-  import { constantRoutes } from '@/router'
+  import { useRoutersStore } from '@/stores'
   import { isExternal } from '@/utils'
   import path from 'path-browserify'
   import { shallowRef } from 'vue'
+  import { RouteRecordRaw } from 'vue-router'
   const drawer = shallowRef(false)
 
-  const routes = constantRoutes
-  const checkItem = ref('Dashboard')
+  const routersStore = useRoutersStore()
 
+  const routes = ref<RouteRecordRaw[]>()
+  // const activepath = routersStore.getActiveRouterPath()
+  onMounted(async () => {
+    routes.value = routersStore.getRouters()
+  })
   /**
    * 解析路径
    *
@@ -27,9 +32,9 @@
     return fullPath
   }
 
-  const activeChange = (name:string) => {
-    checkItem.value = name
-  }
+  // const activeChange = (name:string) => {
+  //   checkItem.value = name
+  // }
 </script>
 
 <template>
@@ -54,10 +59,8 @@
       <AppBarItem
         v-for="route in routes"
         :key="route.path"
-        :active="checkItem"
         :base-path="resolvePath('',route.path)"
         :item="route"
-        @active-change="activeChange"
       />
 
     </template>

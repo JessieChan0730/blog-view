@@ -1,4 +1,5 @@
 // Utilities
 import { createPinia } from 'pinia'
-
-export default createPinia()
+const store = createPinia()
+export * from './modules/router'
+export default store

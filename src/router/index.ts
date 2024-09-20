@@ -4,6 +4,8 @@
  * Automatic routes for `./src/pages/*.vue`
  */
 
+import { RouterStatusEnum } from '@/enums/RouterStatusEnum'
+import { useRoutersStore } from '@/stores'
 import { RouteRecordRaw } from 'vue-router'
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
@@ -24,27 +26,31 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
-
+  {
+    path: '/404',
+    name: 'NotFound',
+    component: () => import('@/pages/error/404.vue'),
+    meta: {
+      hidden: true,
+    },
+  },
   {
     path: '/category',
     component: Layout,
-    redirect: '/category/home',
     name: 'Category',
-    meta: { title: '分类' },
-    children: [
-      {
-        path: 'home',
-        name: 'categoryOne',
-        meta: { title: '分类1' },
-        component: () => import('@/pages/home/index.vue'),
-      },
-      {
-        path: 'c2',
-        name: 'categoryTwo',
-        meta: { title: '分类2' },
-        component: () => import('@/pages/home/index.vue'),
-      },
-    ],
+    meta: {
+      title: '分类',
+      dynamic: true,
+      api: 'api/category/all/',
+      component: 'category',
+      // childrenInfo: {
+      //   titleField: 'name',
+      //   nameField: 'name',
+      //   pathField: 'id',
+      //   component: 'category',
+      // },
+    },
+    children: [],
   },
   {
     path: '/photo',
@@ -90,7 +96,28 @@ export const constantRoutes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: constantRoutes,
-  scrollBehavior: () => ({ left: 0, top: 0 }),
+  scrollBehavior: () => ({
+    left: 0,
+    top: 0,
+  }),
+})
+
+router.beforeEach(async (to, from, next) => {
+  const routerStore = useRoutersStore()
+  // console.log(routerStore.getStatus() === RouterStatusEnum.INIT)
+  // console.log(routerStore.getStatus() === RouterStatusEnum.FINISH)
+  if (routerStore.getStatus() === RouterStatusEnum.INIT) {
+    await routerStore.generateRoutes()
+    next({
+      ...to,
+      replace: true,
+    })
+  } else if (to.matched.length === 0 && routerStore.getStatus() === RouterStatusEnum.FINISH) {
+    next('/404')
+  } else {
+    // 路由加载完成，直接放行
+    next()
+  }
 })
 
 // Workaround for https://github.com/vitejs/vite/issues/11804
