@@ -1,39 +1,43 @@
 <script setup lang="ts">
-  const cards = ref([
-    {
-      title: 'Pre-fab homes',
-      src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg',
-    },
-    {
-      title: 'Favorite road trips',
-      src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
-    },
-    {
-      title: 'Best airlines',
-      src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg',
-    },
-    {
-      title: 'Best airlines',
-      src: 'https://ts1.cn.mm.bing.net/th?id=OIP-C.TAhWzaPOrq-41L00kb-FfAHaHI&w=254&h=245&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-    },
-    {
-      title: 'Best airlines',
-      src: 'https://ts1.cn.mm.bing.net/th?id=OIP-C.pL9aeO50HMujMSzGcOPhKwAAAA&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-    },
-    {
-      title: 'Best airlines',
-      src: 'https://tse3-mm.cn.bing.net/th/id/OIP-C.7nyT9n1wOxyoAADJ8hbSRAHaNK?w=187&h=333&c=7&r=0&o=5&dpr=1.5&pid=1.7',
-    },
-    {
-      title: 'Best airlines',
-      src: 'https://ts1.cn.mm.bing.net/th?id=OIP-C.pL9aeO50HMujMSzGcOPhKwAAAA&w=250&h=250&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2',
-    },
-  ])
+  import { Pagination } from '@/api/pagination'
+  import { PhotosAPI, PhotoWall } from '@/api/photos'
+  import { Ref } from 'vue'
+
+  const photoWallPagination = reactive<Pagination<PhotoWall>>({
+    count: 1,
+    next: '',
+    previous: '',
+    results: [],
+  })
+
+  const photos = ref<PhotoWall[]>([])
+
+  onMounted(async () => {
+    const response = await PhotosAPI.getPhotos()
+    if (response) {
+      photoWallPagination.count = response.count
+      photoWallPagination.next = response.next
+      photoWallPagination.previous = response.previous
+      photoWallPagination.results = response.results
+      photos.value.push(...response.results)
+    }
+  })
+
+  const maxPage = computed(() => {
+    return Math.ceil(photoWallPagination.count / photoWallPagination.results.length)
+  })
+
+  const loadNextPage = async (nextPage:number, loading:Ref<boolean>) => {
+    const response = await PhotosAPI.getPhotos(nextPage)
+    if (response) {
+      photos.value.push(...response.results)
+      loading.value = false
+    }
+  }
 </script>
 
 <template>
-  <ImageWaterfall :data="cards" />
-
+  <ImageWaterfall :data="photos" :max-page="maxPage" @load="loadNextPage" />
 </template>
 
 <style scoped lang="scss"></style>

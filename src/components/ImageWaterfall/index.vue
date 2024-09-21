@@ -1,14 +1,11 @@
 <script setup lang="ts">
+  import { PhotoWall } from '@/api/photos'
+  import { Toast } from '@/utils/toast'
   import { useDisplay } from 'vuetify'
-
-  interface Image {
-    title: string,
-    src: string
-  }
 
   const props = defineProps({
     data: {
-      type: Array<Image>,
+      type: Array<PhotoWall>,
       required: true,
     },
     lg: {
@@ -51,7 +48,19 @@
       required: false,
       default: '1000px',
     },
+    maxPage: {
+      type: Number,
+      required: true,
+    },
   })
+
+  const emit = defineEmits(['load'])
+
+  const currentPage = ref(1)
+
+  const loading = ref(false)
+
+  const haveMoreData = ref(true)
 
   const style = reactive<any>({
     maxWidth: '',
@@ -101,6 +110,36 @@
     init()
   })
 
+  const load = () => {
+    if (currentPage.value > props.maxPage - 1) {
+      haveMoreData.value = false
+      Toast.error('没有更多数据了')
+      return
+    }
+    loading.value = true
+    currentPage.value++
+    emit('load', currentPage.value, loading)
+  }
+
+  const share = async (url:string) => {
+    try {
+      await navigator.clipboard.writeText(url)
+      Toast.success('复制图片链接成功')
+    } catch (e) {
+      // 如果现代API不可用，尝试使用老方法
+      const textarea = document.createElement('textarea')
+      textarea.value = url
+      document.body.appendChild(textarea)
+      textarea.select()
+      try {
+        document.execCommand('copy')
+        Toast.success('复制图片链接成功')
+      } catch (err) {
+        console.error('复制失败', err)
+        Toast.error('无法复制链接，请手动复制。')
+      }
+    }
+  }
 </script>
 
 <template>
@@ -112,34 +151,48 @@
           class="align-end"
           cover
           gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-          :src="image.src"
+          :src="image.image"
         >
-          <v-card-title class="text-white" v-text="image.title" />
+          <v-card-title class="text-white" v-text="image.description" />
         </v-img>
 
         <v-card-actions>
           <v-spacer />
 
-<!--          <v-btn-->
-<!--            color="medium-emphasis"-->
-<!--            icon="mdi-heart"-->
-<!--            size="small"-->
-<!--          />-->
+          <!--          <v-btn-->
+          <!--            color="medium-emphasis"-->
+          <!--            icon="mdi-heart"-->
+          <!--            size="small"-->
+          <!--          />-->
 
-<!--          <v-btn-->
-<!--            color="medium-emphasis"-->
-<!--            icon="mdi-bookmark"-->
-<!--            size="small"-->
-<!--          />-->
+          <!--          <v-btn-->
+          <!--            color="medium-emphasis"-->
+          <!--            icon="mdi-bookmark"-->
+          <!--            size="small"-->
+          <!--          />-->
 
           <v-btn
             color="medium-emphasis"
             icon="mdi-share-variant"
             size="small"
+            @click="share(image.image)"
           />
         </v-card-actions>
       </v-card>
     </div>
+  </div>
+  <div class="d-flex mb-6 justify-center align-center">
+    <v-btn
+      v-show="haveMoreData"
+      class="px-6"
+      color="black"
+      :loading="loading"
+      size="default"
+      variant="tonal"
+      @click="load"
+    >
+      加载更多
+    </v-btn>
   </div>
 </template>
 
