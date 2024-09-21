@@ -22,7 +22,7 @@ export const useRoutersStore = defineStore('routers', () => {
    * 当前选中的路由
    */
 
-  const checkPath = ref<string>()
+  const activeName = ref<string>()
 
 
   async function generateRoutes () {
@@ -108,12 +108,12 @@ export const useRoutersStore = defineStore('routers', () => {
   function getRouters () {
     return routes.value
   }
-  function setCheckPath(path:string) {
-    checkPath.value = path
+  function setActiveName(name:string) {
+    activeName.value = name
   }
 
-  function getCheckPath () {
-    return checkPath.value
+  function getActiveName () {
+    return activeName.value
   }
 
 
@@ -121,7 +121,7 @@ export const useRoutersStore = defineStore('routers', () => {
     generateRoutes,
     getStatus,
     getRouters,
-    setCheckPath,
-    getCheckPath,
+    setActiveName,
+    getActiveName,
   }
 })

@@ -84,7 +84,7 @@
   }
 
   const isActive = (name:string)  => {
-    return   routersStore.getCheckPath() === name
+    return   routersStore.getActiveName() === name
   }
 </script>
 

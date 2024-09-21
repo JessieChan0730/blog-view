@@ -39,6 +39,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     name: 'Category',
     meta: {
+      keepAlive: false,
       title: '分类',
       dynamic: true,
       api: 'api/category/all/',
@@ -103,7 +104,6 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-
   const routerStore = useRoutersStore()
   if (routerStore.getStatus() === RouterStatusEnum.INIT) {
     await routerStore.generateRoutes()
@@ -115,8 +115,8 @@ router.beforeEach(async (to, from, next) => {
     next('/404')
   } else {
     // 路由加载完成，直接放行
-    let name = to.name ?? to.matched[0].name ?? ""
-    routerStore.setCheckPath(name)
+    const name = to.name ?? to.matched[0].name ?? ''
+    routerStore.setActiveName(name)
     next()
   }
 })
