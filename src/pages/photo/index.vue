@@ -11,6 +11,7 @@
   })
 
   const photos = ref<PhotoWall[]>([])
+  const loading = ref(true)
 
   onMounted(async () => {
     const response = await PhotosAPI.getPhotos()
@@ -20,6 +21,7 @@
       photoWallPagination.previous = response.previous
       photoWallPagination.results = response.results
       photos.value.push(...response.results)
+      loading.value = false
     }
   })
 
@@ -38,6 +40,7 @@
 
 <template>
   <ImageWaterfall :data="photos" :max-page="maxPage" @load="loadNextPage" />
+  <Loading :loading="loading" :persistent="false" />
 </template>
 
 <style scoped lang="scss"></style>

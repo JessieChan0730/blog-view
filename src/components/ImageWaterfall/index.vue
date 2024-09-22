@@ -58,7 +58,7 @@
 
   const currentPage = ref(1)
 
-  const loading = ref(false)
+  const loading = ref(true)
 
   const haveMoreData = ref(true)
 
@@ -108,6 +108,7 @@
 
   onMounted(() => {
     init()
+    loading.value = false
   })
 
   const load = () => {
@@ -143,7 +144,7 @@
 </script>
 
 <template>
-  <div class="waterfall-box" :style="style">
+  <div v-show="data.length > 0" class="waterfall-box" :style="style">
     <div v-for="image,index in data" :key="index" class="item">
       <v-card hover>
         <v-img
@@ -181,7 +182,14 @@
       </v-card>
     </div>
   </div>
-  <div class="d-flex mb-6 justify-center align-center">
+  <v-empty-state
+    v-show="data.length === 0"
+    class="empty"
+    icon="mdi-magnify"
+    text="博客作者还没有发布一张照片呢，请慢慢等待作者发布的他的第一张照片吧"
+    title="暂时没有图片"
+  />
+  <div v-if="data.length > 0" class="d-flex mb-6 justify-center align-center">
     <v-btn
       v-show="haveMoreData"
       class="px-6"
@@ -197,7 +205,11 @@
 </template>
 
 <style scoped lang="scss">
+.empty{
+  min-height: 700px;
+}
 .waterfall-box {
+  min-height: 900px;
   margin: 1rem auto;
 }
 
