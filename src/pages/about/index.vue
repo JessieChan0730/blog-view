@@ -2,8 +2,8 @@
   import { SiteInfo, SiteInfoAPI } from '@/api/siteinfo'
 
   const siteinfo = reactive<SiteInfo>({
-    title: '',
-    content: '',
+    title: '关于本站',
+    content: '暂无内容',
   })
 
   onMounted(async () => {
