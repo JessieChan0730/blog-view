@@ -83,8 +83,8 @@
     router.push(path)
   }
 
-  const isActive = (name:string)  => {
-    return   routersStore.getActiveName() === name
+  const isActive = (name:string) => {
+    return routersStore.getActiveName() === name
   }
 </script>
 
@@ -103,7 +103,7 @@
       {{ item.meta.title }}
     </v-btn>
     <!--存在多个子路由-->
-    <v-menu v-else>
+    <v-menu v-else transition="scroll-y-transition">
       <template #activator="{ props }">
         <v-btn
           class="item"
