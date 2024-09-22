@@ -59,6 +59,10 @@
   })
 
   onMounted(async () => {
+    await initData()
+  })
+
+  const initData = async () => {
     const resLinks = await LinkAPI.getAllLinks()
     const resStatement = await StatementAPI.getAllStatements()
     if (resLinks && resLinks.length > 0) {
@@ -67,7 +71,7 @@
     if (resStatement) {
       statement.value = resStatement.statement
     }
-  })
+  }
 
   // 随机颜色函数
   const getRandomColor = () => {
@@ -107,7 +111,7 @@
 <template>
   <Container>
     <template #default>
-      <v-card class="w-100">
+      <v-card class="w-100" v-if="links.length !== 0 && statement != ''">
         <v-card-item class="d-flex justify-center align-center">
           <v-card-title>
             小伙伴们
@@ -202,6 +206,9 @@
           <div v-if="statement" v-dompurify-html="statement" v-highlight class="statement" />
         </v-card-item>
         <v-divider color="#00b5ad" opacity="100" :thickness="2" />
+      </v-card>
+      <v-card class="w-100" v-else>
+        <NetWorkError :retry-fun="initData"/>
       </v-card>
     </template>
   </Container>
