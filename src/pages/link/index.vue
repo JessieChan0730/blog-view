@@ -111,7 +111,7 @@
 <template>
   <Container>
     <template #default>
-      <v-card class="w-100" v-if="links.length !== 0 && statement != ''">
+      <v-card v-if="links.length !== 0 && statement != ''" class="w-100">
         <v-card-item class="d-flex justify-center align-center">
           <v-card-title>
             小伙伴们
@@ -207,8 +207,8 @@
         </v-card-item>
         <v-divider color="#00b5ad" opacity="100" :thickness="2" />
       </v-card>
-      <v-card class="w-100" v-else>
-        <NetWorkError :retry-fun="initData"/>
+      <v-card v-else class="w-100">
+        <NetWorkError :retry-fun="initData" />
       </v-card>
     </template>
   </Container>

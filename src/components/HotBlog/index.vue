@@ -1,5 +1,19 @@
 <script setup lang="ts">
+  import { Article, ArticleAPI } from '@/api/article'
+
   const loading = ref(false)
+  const articles = ref<Article[]>([])
+
+  onMounted(async () => {
+    const response = await ArticleAPI.getRecommendArticle()
+    if (response) {
+      articles.value.push(...response)
+    }
+  })
+
+  const view = (id:number) => {
+    console.log(id)
+  }
 </script>
 
 <template>
@@ -15,70 +29,28 @@
     <v-divider class="mb-2" color="#fbbd08" :thickness="2" />
     <div class="px-2">
       <v-card
+        v-for="article in articles"
+        :key="article.id"
         class="mx-auto mb-1"
         color="surface-variant"
-        image="https://cdn.vuetifyjs.com/docs/images/cards/dark-beach.jpg"
-        subtitle="Take a walk down the beach"
-        title="Evening sunset"
+        :image="article.cover_url"
       >
+        <div class="bg-color">
+          <v-card-title>
+            {{ article.title }}
+          </v-card-title>
+          <v-card-text>
+            {{ article.intro }}
+          </v-card-text>
+        </div>
         <template #actions>
           <v-btn
             append-icon="mdi-chevron-right"
             block
-            color="red-lighten-2"
-            text="Book Activity"
+            color="blue-lighten-1"
+            text="点击查看详情"
             variant="outlined"
-          />
-        </template>
-      </v-card>
-      <v-card
-        class="mx-auto mb-1"
-        color="surface-variant"
-        image="https://cdn.vuetifyjs.com/docs/images/cards/dark-beach.jpg"
-        subtitle="Take a walk down the beach"
-        title="Evening sunset"
-      >
-        <template #actions>
-          <v-btn
-            append-icon="mdi-chevron-right"
-            block
-            color="red-lighten-2"
-            text="Book Activity"
-            variant="outlined"
-          />
-        </template>
-      </v-card>
-      <v-card
-        class="mx-auto mb-1"
-        color="surface-variant"
-        image="https://cdn.vuetifyjs.com/docs/images/cards/dark-beach.jpg"
-        subtitle="Take a walk down the beach"
-        title="Evening sunset"
-      >
-        <template #actions>
-          <v-btn
-            append-icon="mdi-chevron-right"
-            block
-            color="red-lighten-2"
-            text="Book Activity"
-            variant="outlined"
-          />
-        </template>
-      </v-card>
-      <v-card
-        class="mx-auto mb-1"
-        color="surface-variant"
-        image="https://cdn.vuetifyjs.com/docs/images/cards/dark-beach.jpg"
-        subtitle="Take a walk down the beach"
-        title="Evening sunset"
-      >
-        <template #actions>
-          <v-btn
-            append-icon="mdi-chevron-right"
-            block
-            color="red-lighten-2"
-            text="Book Activity"
-            variant="outlined"
+            @click="view(article.id)"
           />
         </template>
       </v-card>
@@ -86,6 +58,9 @@
   </v-card>
 </template>
 
-<style scoped lang="sass">
-
+<style scoped lang="scss">
+.bg-color {
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
 </style>
