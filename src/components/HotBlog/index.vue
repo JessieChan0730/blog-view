@@ -11,7 +11,7 @@
     }
   })
 
-  const view = (id:number) => {
+  const view = (id: number) => {
     console.log(id)
   }
 </script>
@@ -31,18 +31,15 @@
       <v-card
         v-for="article in articles"
         :key="article.id"
-        class="mx-auto mb-1"
+        class="mx-auto mb-2"
         color="surface-variant"
+        hover
         :image="article.cover_url"
       >
-        <div class="bg-color mb-1">
-          <v-card-title>
-            {{ article.title }}
-          </v-card-title>
-          <v-card-text>
-            {{ article.intro }}
-          </v-card-text>
-        </div>
+        <h1 class="title bg-color text-sm-body-2 px-1 py-1">
+          {{ article.title }}
+        </h1>
+        <v-spacer class="mb-16" />
         <template #actions>
           <v-btn
             append-icon="mdi-chevron-right"
@@ -60,7 +57,7 @@
 
 <style scoped lang="scss">
 .bg-color {
-  background-color: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.5);
   color: #fff;
 }
 </style>
