@@ -35,7 +35,7 @@
         color="surface-variant"
         :image="article.cover_url"
       >
-        <div class="bg-color">
+        <div class="bg-color mb-1">
           <v-card-title>
             {{ article.title }}
           </v-card-title>
@@ -60,7 +60,7 @@
 
 <style scoped lang="scss">
 .bg-color {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.2);
   color: #fff;
 }
 </style>

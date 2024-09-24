@@ -1,3 +1,4 @@
+import { Tags } from '@/api/tags'
 import request from '@/utils/request'
 
 const RECOMMEND_BASE_URL = '/api/front/article'
@@ -27,10 +28,4 @@ export interface Category {
   id: number;
   name: string;
   display: boolean;
-}
-
-export interface Tags {
-  id: number;
-  name: string;
-  color: string;
 }

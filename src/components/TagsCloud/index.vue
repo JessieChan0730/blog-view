@@ -1,5 +1,14 @@
 <script setup lang="ts">
+  import { Tags, TagsAPI } from '@/api/tags'
+
   const loading = ref(false)
+  const tags = ref<Tags[]>([])
+  onMounted(async () => {
+    const response = await TagsAPI.getAllTags()
+    if (response) {
+      tags.value.push(...response)
+    }
+  })
 </script>
 
 <template>
@@ -15,13 +24,15 @@
     <v-divider class="mb-2" color="#fbbd08" :thickness="2" />
     <div class="px-2">
       <v-chip
+        v-for="tag in tags"
+        :key="tag.id"
         class="ma-2"
-        color="pink"
+        :color="tag.color"
         label
         size="small"
       >
         <v-icon icon="mdi-label" start />
-        Tags
+        {{ tag.name }}
       </v-chip>
     </div>
   </v-card>
