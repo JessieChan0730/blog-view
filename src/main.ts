@@ -11,6 +11,7 @@ import { registerPlugins } from '@/plugins'
 import App from './App.vue'
 // scss
 import '@/styles/index.scss'
+import '@/assets/font/iconfont.css'
 // Composables
 import { createApp } from 'vue'
 

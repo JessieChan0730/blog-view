@@ -1,0 +1,35 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4694409 */
+  src: url('iconfont.woff2?t=1727196114131') format('woff2'),
+       url('iconfont.woff?t=1727196114131') format('woff'),
+       url('iconfont.ttf?t=1727196114131') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-github:before {
+  content: "\e63a";
+}
+
+.icon-csdn:before {
+  content: "\e600";
+}
+
+.icon-icon_bilibili-circle:before {
+  content: "\e601";
+}
+
+.icon-icon_TikTok-circle:before {
+  content: "\e602";
+}
+
+.icon-bilibilizhanghao:before {
+  content: "\e603";
+}
+

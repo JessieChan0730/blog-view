@@ -1,6 +1,32 @@
 <script setup lang="ts">
+  import { User, UserAPI } from '@/api/user'
+
   const loading = ref(false)
-  const open = ref(['User'])
+  const user = reactive<User>({
+    nickname: '',
+    signature: '',
+    avatar: '',
+    more_info: {
+      hobby: [],
+      media: {
+        github: '',
+        csdn: '',
+        tiktok: '',
+        bilibili: '',
+      },
+    },
+  })
+
+  onMounted(async () => {
+    const response = await UserAPI.getUserInfo()
+    if (response) {
+      Object.assign(user, { ...response })
+    }
+  })
+
+  const checkMedia = (link:string) => {
+    window.location.href = link
+  }
 </script>
 
 <template>
@@ -22,13 +48,13 @@
     <v-img
       cover
       height="300"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      :src="user.avatar"
     />
 
     <v-card-item class="d-flex flex-column justify-center align-center">
-      <v-card-title>用户名</v-card-title>
-      <v-card-subtitle>
-        <span class="me-0">嘻嘻嘻嘻</span>
+      <v-card-title class="text-center">{{ user.nickname }}</v-card-title>
+      <v-card-subtitle class="text-center">
+        {{ user.signature }}
       </v-card-subtitle>
     </v-card-item>
 
@@ -37,59 +63,118 @@
     <v-card-item>
       <v-row align="center" no-gutters>
         <v-col
-          v-for="item in 4"
           class="d-flex justify-center align-center px-0"
           :cols="12"
           :lg="3"
           :md="6"
           :sm="12"
         >
-          <v-btn
-            :block="false"
-            class="text-caption"
-            density="compact"
-            icon="$vuetify"
-            size="40"
-            variant="tonal"
-          />
+          <v-tooltip location="top" :text="user.more_info.media.csdn">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :block="false"
+                class="text-caption"
+                density="compact"
+                rounded="circle"
+                size="40"
+                variant="tonal"
+                @click="checkMedia(user.more_info.media.csdn)"
+              >
+                <i class="iconfont icon-csdn text-h6" />
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </v-col>
+        <v-col
+          class="d-flex justify-center align-center px-0"
+          :cols="12"
+          :lg="3"
+          :md="6"
+          :sm="12"
+        >
+          <v-tooltip location="top" :text="user.more_info.media.tiktok">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :block="false"
+                class="text-caption"
+                density="compact"
+                icon="mdi-github"
+                rounded="circle"
+                size="40"
+                variant="tonal"
+                @click="checkMedia(user.more_info.media.tiktok)"
+              >
+                <i class="iconfont icon-icon_TikTok-circle text-h5" />
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </v-col>
+        <v-col
+          class="d-flex justify-center align-center px-0"
+          :cols="12"
+          :lg="3"
+          :md="6"
+          :sm="12"
+        >
+          <v-tooltip location="top" :text="user.more_info.media.bilibili">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :block="false"
+                class="text-caption"
+                density="compact"
+                icon="mdi-github"
+                rounded="circle"
+                size="40"
+                variant="tonal"
+                @click="checkMedia(user.more_info.media.bilibili)"
+              >
+                <i class="iconfont icon-icon_bilibili-circle text-h5" />
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </v-col>
+        <v-col
+          class="d-flex justify-center align-center px-0"
+          :cols="12"
+          :lg="3"
+          :md="6"
+          :sm="12"
+        >
+          <v-tooltip location="top" :text="user.more_info.media.github">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :block="false"
+                class="text-caption"
+                density="compact"
+                rounded="circle"
+                size="40"
+                variant="tonal"
+                @click="checkMedia(user.more_info.media.github)"
+              >
+                <i class="iconfont icon-github text-h6" />
+              </v-btn>
+            </template>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-card-item>
 
     <v-divider class="mx-4 my-2" />
     <v-card-item>
-      <v-list v-model:opened="open" density="compact">
-        <v-list-group class="mb-1" value="Users">
+      <v-list density="compact">
+        <v-list-group v-for="hobby in user.more_info.hobby" :key="hobby.name" class="mb-1">
           <template #activator="{ props }">
             <v-list-item
-              v-bind="props"
-              title="我滴爱好"
+              v-bind="{ ...props, title: hobby.name }"
+              :title="hobby.name"
             />
           </template>
           <div class="px-4 py-2 text-grey-darken-1">
-            唱，跳，RAP，篮球,啊哈哈哈行哈哈哈哈哈啊啊哈哈爱好爱好
-          </div>
-        </v-list-group>
-        <v-list-group class="mb-1" value="Avatar">
-          <template #activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              title="我滴爱好"
-            />
-          </template>
-          <div class="px-4 py-2 text-grey-darken-1">
-            唱，跳，RAP，篮球,啊哈哈哈行哈哈哈哈哈啊啊哈哈爱好爱好
-          </div>
-        </v-list-group>
-        <v-list-group class="mb-1" value="OK">
-          <template #activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              title="我滴爱好"
-            />
-          </template>
-          <div class="px-4 py-2 text-grey-darken-1">
-            唱，跳，RAP，篮球,啊哈哈哈行哈哈哈哈哈啊啊哈哈爱好爱好
+            {{ hobby.detail }}
           </div>
         </v-list-group>
       </v-list>
