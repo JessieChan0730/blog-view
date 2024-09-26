@@ -1,13 +1,37 @@
 <script setup lang="ts">
+  import { Article, ArticleAPI, ArticleParams } from '@/api/article'
+  import { Pagination } from '@/api/pagination'
+  import { useScroll } from '@/hooks/scroll'
+
   const page = ref<number>(1)
-  const topics = ref<string[]>([
-    '🎤 Advice',
-    '🐕 Animals',
-  ])
+  const articles = reactive<Pagination<Article>>({
+    count: 0,
+    next: '',
+    previous: '',
+    results: [],
+  })
+  const loadData = async (params?:ArticleParams) => {
+    const response = await ArticleAPI.getArticles(params)
+    if (response) {
+      Object.assign(articles, { ...response })
+    }
+  }
+  onMounted(async () => {
+    await loadData({ page: 1 })
+  })
+
+  watch(() => page.value, async () => {
+    await loadData({ page: page.value })
+    useScroll(1014)
+  })
+  const length = computed(() => {
+    return Math.ceil(articles.count / articles.results.length)
+  })
 </script>
 
 <template>
   <v-parallax
+    ref="parallax"
     class="mb-5"
     src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
   >
@@ -23,97 +47,48 @@
   <Container>
     <template #default>
       <v-hover
+        v-for="article in articles.results"
+        :key="article.id"
         v-slot="{ isHovering, props }"
         close-delay="100"
         open-delay="100"
       >
         <v-card
           border="sm"
-          class="mx-auto mb-2 "
+          class="mx-auto mb-4 w-100"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
         >
           <v-img
+            class="border-b-sm"
             cover
-            height="400px"
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+            height="350px"
+            :src="article.cover_url"
           />
 
           <v-card-title>
-            文章标题
+            {{ article.title }}
           </v-card-title>
 
           <v-card-subtitle class="py-2">
-            发布时间：{{ new Date().getFullYear() }}/02/03
+            发布时间：{{ article.create_date }}
           </v-card-subtitle>
           <v-chip-group class="mb-2 px-3" column>
             <v-chip
-              v-for="topic in topics"
-              :key="topic"
-              color="pink"
+              v-for="tag in article.tags"
+              :key="tag.id"
+              :color="tag.color"
               density="comfortable"
-              :text="topic"
-              :value="topic"
-            />
+              label
+            >
+              <v-icon icon="mdi-label" start />
+              {{ tag.name }}
+            </v-chip>
           </v-chip-group>
           <v-divider />
           <v-card-text>
-            最近俄乌局势持续升级，刷推看到一些视频，俄军坦克冲撞并碾压在对向车道行驶中的乌民用车
-            （又有消息说是乌军坦克，尚不知真假，但平民的确是乌克兰人）...一位乌克兰父亲含泪将妻儿送上前往安全地区的车（又证实是假消息，
-            与文无关...这年头想看到真实的消息太难了，无论怎样，总归是值得思考的一件事吧）......唉，只能说珍惜当下的和平吧......
-          </v-card-text>
-          <v-card-actions class="flex-0-0 justify-end">
-
-            <v-btn
-              color="purple-darken-2"
-              text="查看全文"
-              @click="gotoDetail(1)"
-            />
-
-          </v-card-actions>
-        </v-card>
-      </v-hover>
-      <v-hover
-        v-slot="{ isHovering, props }"
-        close-delay="100"
-        open-delay="100"
-      >
-        <v-card
-          border="sm"
-          class="mx-auto mb-2 "
-          :class="{ 'on-hover': isHovering }"
-          :elevation="isHovering ? 16 : 2"
-          v-bind="props"
-        >
-          <v-img
-            cover
-            height="400px"
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-          />
-
-          <v-card-title>
-            文章标题
-          </v-card-title>
-
-          <v-card-subtitle class="py-2">
-            发布时间：{{ new Date().getFullYear() }}/02/03
-          </v-card-subtitle>
-          <v-chip-group class="mb-2 px-3" column>
-            <v-chip
-              v-for="topic in topics"
-              :key="topic"
-              color="pink"
-              density="comfortable"
-              :text="topic"
-              :value="topic"
-            />
-          </v-chip-group>
-          <v-divider />
-          <v-card-text>
-            最近俄乌局势持续升级，刷推看到一些视频，俄军坦克冲撞并碾压在对向车道行驶中的乌民用车
-            （又有消息说是乌军坦克，尚不知真假，但平民的确是乌克兰人）...一位乌克兰父亲含泪将妻儿送上前往安全地区的车（又证实是假消息，
-            与文无关...这年头想看到真实的消息太难了，无论怎样，总归是值得思考的一件事吧）......唉，只能说珍惜当下的和平吧......
+            {{ article.intro }}
           </v-card-text>
           <v-card-actions class="flex-0-0 justify-end">
 
@@ -129,7 +104,7 @@
       <v-pagination
         v-model="page"
         class="mx-auto mt-5"
-        :length="15"
+        :length="length"
         :total-visible="7"
       />
     </template>

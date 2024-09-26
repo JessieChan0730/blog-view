@@ -1,3 +1,4 @@
+import { Pagination } from '@/api/pagination'
 import { Tags } from '@/api/tags'
 import request from '@/utils/request'
 
@@ -9,6 +10,20 @@ export class ArticleAPI {
       method: 'get',
     })
   }
+
+  static getArticles (params?: ArticleParams) {
+    return request<any, Pagination<Article>>({
+      url: `${RECOMMEND_BASE_URL}/`,
+      method: 'get',
+      params,
+    })
+  }
+}
+
+export interface ArticleParams {
+  category?:number;
+  search?:string;
+  page?:string | number;
 }
 
 export interface Article {

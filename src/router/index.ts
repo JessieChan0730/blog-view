@@ -42,7 +42,7 @@ export const constantRoutes: RouteRecordRaw[] = [
       keepAlive: false,
       title: '分类',
       dynamic: true,
-      api: 'api/category/all/',
+      api: 'api/front/category/',
       component: 'category',
       // childrenInfo: {
       //   titleField: 'name',
