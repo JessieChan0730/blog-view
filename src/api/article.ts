@@ -1,21 +1,29 @@
+import { Category } from '@/api/category'
 import { Pagination } from '@/api/pagination'
 import { Tags } from '@/api/tags'
 import request from '@/utils/request'
 
-const RECOMMEND_BASE_URL = '/api/front/article'
+const ARTICLE_BASE_URL = '/api/front/article'
 export class ArticleAPI {
   static getRecommendArticle () {
     return request<any, Article[]>({
-      url: `${RECOMMEND_BASE_URL}/recommend/`,
+      url: `${ARTICLE_BASE_URL}/recommend/`,
       method: 'get',
     })
   }
 
   static getArticles (params?: ArticleParams) {
     return request<any, Pagination<Article>>({
-      url: `${RECOMMEND_BASE_URL}/`,
+      url: `${ARTICLE_BASE_URL}/`,
       method: 'get',
       params,
+    })
+  }
+
+  static viewArticle (id:number | string) {
+    return request< any, Article>({
+      url: `${ARTICLE_BASE_URL}/${id}`,
+      method: 'get',
     })
   }
 }
@@ -37,10 +45,4 @@ export interface Article {
   tags: Tags[];
   create_date: string;
   update_date: string;
-}
-
-export interface Category {
-  id: number;
-  name: string;
-  display: boolean;
 }

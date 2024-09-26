@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { Article, ArticleAPI } from '@/api/article'
-
+  const router = useRouter()
   const loading = ref(false)
   const articles = ref<Article[]>([])
 
@@ -11,8 +11,8 @@
     }
   })
 
-  const view = (id: number) => {
-    console.log(id)
+  const viewArticle = (id: number) => {
+    router.push(`/blog/${id}`)
   }
 </script>
 
@@ -47,7 +47,7 @@
             color="blue-lighten-1"
             text="点击查看详情"
             variant="outlined"
-            @click="view(article.id)"
+            @click="viewArticle(article.id)"
           />
         </template>
       </v-card>

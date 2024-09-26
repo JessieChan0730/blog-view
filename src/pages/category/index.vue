@@ -1,24 +1,70 @@
 <script setup lang="ts">
-  const router = useRoute()
-
+  import { Article, ArticleAPI, ArticleParams } from '@/api/article'
+  import { CategoryAPI } from '@/api/category'
+  import { Pagination } from '@/api/pagination'
+  import { useScroll } from '@/hooks/scroll'
+  import { useFrontSettings } from '@/stores/modules/settings'
+  const frontSetting = useFrontSettings()
+  const route = useRoute()
+  const router = useRouter()
+  const page = ref(1)
   const categoryId = ref<number | string>()
-
-  onMounted(() => {
-    categoryId.value = parseId(router.fullPath)
+  const categoryName = ref<string>('')
+  const articles = reactive<Pagination<Article>>({
+    count: 0,
+    next: '',
+    previous: '',
+    results: [],
   })
 
-  watch([() => router.fullPath], () => {
-    categoryId.value = parseId(router.fullPath)
+  const loadArticleList = async (params?:ArticleParams) => {
+    const resArticle = await ArticleAPI.getArticles(params)
+    if (resArticle) {
+      Object.assign(articles, { ...resArticle })
+    }
+  }
+
+  const loadCategoryName = async (categoryId:number | string) => {
+    const resCategory = await CategoryAPI.getCategoryDetail(categoryId as string | number)
+    if (resCategory) {
+      categoryName.value = resCategory.name
+    }
+  }
+
+  onMounted(async () => {
+    await frontSetting.get()
+    categoryId.value = parseId(route.fullPath)
   })
 
-  watch(categoryId, () => {
-    console.log(categoryId.value)
+  watch([() => route.fullPath], () => {
+    categoryId.value = parseId(route.fullPath)
+  })
+  /**
+   * 监听器：监听切换分类
+   */
+  watch(categoryId, async () => {
+    await loadCategoryName(categoryId.value as string | number)
+    await loadArticleList({ category: categoryId.value as number })
+    page.value = 1
+  })
+  /**
+   * 监听器：监听分页且切换
+   */
+  watch(() => page.value, async () => {
+    await loadArticleList({ category: categoryId.value as number, page: page.value })
+    useScroll(60)
   })
 
   const parseId = (path:string) => {
     const pathParts = path.split('/')
     pathParts.shift()
     return pathParts.pop()
+  }
+  const length = computed(() => {
+    return Math.ceil(articles.count / Number(frontSetting.frontSetting.blog.page_size.value))
+  })
+  const viewArticle = (id: number) => {
+    router.push(`/blog/${id}`)
   }
 </script>
 
@@ -28,120 +74,80 @@
       <v-card class="w-100 mb-4">
         <v-card-item class="d-flex justify-center align-center">
           <v-card-title class="text-sm-h5">
-            分类 {{ categoryId }} 下的文章
+            分类 {{ categoryName }} 下的文章
           </v-card-title>
         </v-card-item>
       </v-card>
       <v-hover
+        v-for="article in articles.results"
+        :key="article.id"
         v-slot="{ isHovering, props }"
         close-delay="100"
         open-delay="100"
       >
         <v-card
           border="sm"
-          class="mx-auto mb-2 "
+          class="mx-auto mb-4 w-100"
           :class="{ 'on-hover': isHovering }"
           :elevation="isHovering ? 16 : 2"
           v-bind="props"
         >
           <v-img
+            class="border-b-sm"
             cover
-            height="400px"
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+            height="360px"
+            :src="article.cover_url"
           />
 
           <v-card-title>
-            文章标题
+            {{ article.title }}
           </v-card-title>
 
           <v-card-subtitle class="py-2">
-            发布时间：{{ new Date().getFullYear() }}/02/03
+            发布时间：{{ article.create_date }}
           </v-card-subtitle>
           <v-chip-group class="mb-2 px-3" column>
             <v-chip
-              v-for="topic in topics"
-              :key="topic"
-              color="pink"
+              v-for="tag in article.tags"
+              :key="tag.id"
+              :color="tag.color"
               density="comfortable"
-              :text="topic"
-              :value="topic"
-            />
+              label
+            >
+              <v-icon icon="mdi-label" start />
+              {{ tag.name }}
+            </v-chip>
           </v-chip-group>
           <v-divider />
           <v-card-text>
-            最近俄乌局势持续升级，刷推看到一些视频，俄军坦克冲撞并碾压在对向车道行驶中的乌民用车
-            （又有消息说是乌军坦克，尚不知真假，但平民的确是乌克兰人）...一位乌克兰父亲含泪将妻儿送上前往安全地区的车（又证实是假消息，
-            与文无关...这年头想看到真实的消息太难了，无论怎样，总归是值得思考的一件事吧）......唉，只能说珍惜当下的和平吧......
+            {{ article.intro }}
           </v-card-text>
           <v-card-actions class="flex-0-0 justify-end">
 
             <v-btn
               color="purple-darken-2"
               text="查看全文"
-              @click="gotoDetail(1)"
-            />
-
-          </v-card-actions>
-        </v-card>
-      </v-hover>
-      <v-hover
-        v-slot="{ isHovering, props }"
-        close-delay="100"
-        open-delay="100"
-      >
-        <v-card
-          border="sm"
-          class="mx-auto mb-2 "
-          :class="{ 'on-hover': isHovering }"
-          :elevation="isHovering ? 16 : 2"
-          v-bind="props"
-        >
-          <v-img
-            cover
-            height="400px"
-            src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-          />
-
-          <v-card-title>
-            文章标题
-          </v-card-title>
-
-          <v-card-subtitle class="py-2">
-            发布时间：{{ new Date().getFullYear() }}/02/03
-          </v-card-subtitle>
-          <v-chip-group class="mb-2 px-3" column>
-            <v-chip
-              v-for="topic in topics"
-              :key="topic"
-              color="pink"
-              density="comfortable"
-              :text="topic"
-              :value="topic"
-            />
-          </v-chip-group>
-          <v-divider />
-          <v-card-text>
-            最近俄乌局势持续升级，刷推看到一些视频，俄军坦克冲撞并碾压在对向车道行驶中的乌民用车
-            （又有消息说是乌军坦克，尚不知真假，但平民的确是乌克兰人）...一位乌克兰父亲含泪将妻儿送上前往安全地区的车（又证实是假消息，
-            与文无关...这年头想看到真实的消息太难了，无论怎样，总归是值得思考的一件事吧）......唉，只能说珍惜当下的和平吧......
-          </v-card-text>
-          <v-card-actions class="flex-0-0 justify-end">
-
-            <v-btn
-              color="purple-darken-2"
-              text="查看全文"
-              @click="gotoDetail(1)"
+              @click="viewArticle(article.id)"
             />
 
           </v-card-actions>
         </v-card>
       </v-hover>
       <v-pagination
+        v-if="articles.results.length !== 0"
         v-model="page"
         class="mx-auto mt-5"
-        :length="15"
+        :length="length"
         :total-visible="7"
       />
+      <v-card v-else class="w-100" style="height: 562px">
+        <v-empty-state
+
+          icon="mdi-magnify"
+          text="该分类下暂时还没有任何博客，请静静等待作者发布博客吧"
+          title="暂无博客"
+        ></v-empty-state>
+      </v-card>
     </template>
   </Container>
 </template>

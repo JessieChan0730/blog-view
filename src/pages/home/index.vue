@@ -2,7 +2,10 @@
   import { Article, ArticleAPI, ArticleParams } from '@/api/article'
   import { Pagination } from '@/api/pagination'
   import { useScroll } from '@/hooks/scroll'
+  import { useFrontSettings } from '@/stores/modules/settings'
 
+  const frontSetting = useFrontSettings()
+  const router = useRouter()
   const page = ref<number>(1)
   const articles = reactive<Pagination<Article>>({
     count: 0,
@@ -10,13 +13,14 @@
     previous: '',
     results: [],
   })
-  const loadData = async (params?:ArticleParams) => {
+  const loadData = async (params?: ArticleParams) => {
     const response = await ArticleAPI.getArticles(params)
     if (response) {
       Object.assign(articles, { ...response })
     }
   }
   onMounted(async () => {
+    await frontSetting.get()
     await loadData({ page: 1 })
   })
 
@@ -25,8 +29,12 @@
     useScroll(1014)
   })
   const length = computed(() => {
-    return Math.ceil(articles.count / articles.results.length)
+    return Math.ceil(articles.count / Number(frontSetting.frontSetting.blog.page_size.value))
   })
+
+  const viewArticle = (id: number) => {
+    router.push(`/blog/${id}`)
+  }
 </script>
 
 <template>
@@ -63,7 +71,7 @@
           <v-img
             class="border-b-sm"
             cover
-            height="350px"
+            height="360px"
             :src="article.cover_url"
           />
 
@@ -95,7 +103,7 @@
             <v-btn
               color="purple-darken-2"
               text="查看全文"
-              @click="gotoDetail(1)"
+              @click="viewArticle(article.id)"
             />
 
           </v-card-actions>

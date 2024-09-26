@@ -92,6 +92,19 @@ export const constantRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: '/blog',
+    component: Layout,
+    redirect: `/blog/1`,
+    name: 'Blog',
+    meta: { hidden: true },
+    children: [
+      {
+        path: ':id',
+        component: () => import('@/pages/article/detail.vue'),
+      },
+    ],
+  },
 ]
 
 const router = createRouter({

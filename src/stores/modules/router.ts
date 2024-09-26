@@ -24,7 +24,6 @@ export const useRoutersStore = defineStore('routers', () => {
 
   const activeName = ref<string>()
 
-
   async function generateRoutes () {
     try {
       for (const route of constantRoutes) {
@@ -108,14 +107,13 @@ export const useRoutersStore = defineStore('routers', () => {
   function getRouters () {
     return routes.value
   }
-  function setActiveName(name:string) {
+  function setActiveName (name:string) {
     activeName.value = name
   }
 
   function getActiveName () {
     return activeName.value
   }
-
 
   return {
     generateRoutes,
