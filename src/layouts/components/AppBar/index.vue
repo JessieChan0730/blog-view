@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import AppBarItem from '@/layouts/components/AppBar/components/AppBarItem.vue'
   import { useRoutersStore } from '@/stores'
+  import { useFrontSettings } from '@/stores/modules/settings'
   import { isExternal } from '@/utils'
   import path from 'path-browserify'
   import { shallowRef } from 'vue'
@@ -8,8 +9,10 @@
   const drawer = shallowRef(false)
 
   const routersStore = useRoutersStore()
+  const settings = useFrontSettings()
   const routes = ref<RouteRecordRaw[]>()
   onMounted(async () => {
+    await settings.get()
     routes.value = routersStore.getRouters()
   })
   /**
@@ -47,7 +50,7 @@
         max-width="40"
         src="https://cdn.vuetifyjs.com/docs/images/logos/v.svg"
       />
-      <v-app-bar-title class="w-25 font-weight-bold font-weight-black d-sm-none d-lg-block d-md-block">Jessie`Blog</v-app-bar-title>
+      <v-app-bar-title class="w-25 font-weight-bold font-weight-black d-sm-none d-lg-block d-md-block">{{ settings.frontSetting.website_title.value }}</v-app-bar-title>
     </div>
 
     <template v-if="$vuetify.display.mdAndUp">
@@ -66,7 +69,7 @@
       hide-details
       label="搜索文章"
       max-width="300"
-      prepend-inner-icon="fa:fas fa-search"
+      prepend-inner-icon="mdi-magnify"
       required
       variant="solo-inverted"
     />

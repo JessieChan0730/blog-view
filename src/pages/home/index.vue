@@ -23,6 +23,17 @@
     await frontSetting.get()
     await loadData({ page: 1 })
   })
+  const greeting = computed(() => {
+    const now = new Date();
+    const hours = now.getHours();
+    if (hours < 12){
+      return '早上好，愿您的每一天都像阳光般灿烂'
+    }else if(hours < 16){
+      return   '下午好，愿您有个美好的下午'
+    }else {
+      return  '晚上好，愿您有个美丽的梦乡'
+    }
+  })
 
   watch(() => page.value, async () => {
     await loadData({ page: page.value })
@@ -41,14 +52,14 @@
   <v-parallax
     ref="parallax"
     class="mb-5"
-    src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+    :src="frontSetting.frontSetting.website_cover.value"
   >
     <div class="d-flex flex-column fill-height justify-center align-center text-white">
       <h1 class="text-h4 font-weight-thin mb-4">
         欢迎！
       </h1>
       <h4 class="subheading">
-        Build your application today!
+        {{ greeting }}
       </h4>
     </div>
   </v-parallax>
