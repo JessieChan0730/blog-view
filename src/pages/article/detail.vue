@@ -1,7 +1,9 @@
 <script setup lang="ts">
   import { Article, ArticleAPI } from '@/api/article'
+  import { UserAPI } from '@/api/user'
 
   const route = useRoute()
+  const authorName  = ref('');
   const article = reactive<Article>({
     id: 1,
     title: '',
@@ -21,8 +23,12 @@
 
   onMounted(async () => {
     const response = await ArticleAPI.viewArticle(route.params.id)
+    const resUserinfo = await UserAPI.getUserInfo()
     if (response) {
       Object.assign(article, { ...response })
+    }
+    if (resUserinfo){
+       authorName.value = resUserinfo.nickname
     }
   })
 
@@ -83,7 +89,7 @@
           </div>
           <div class="author-info">
             <ul>
-              <li>1 作者：{{ }}</li>
+              <li>1 作者：{{ authorName }}</li>
               <li>2 发表时间：{{ article.create_date }}</li>
               <li>3 最后修改：{{ article.update_date }}</li>
               <li>
