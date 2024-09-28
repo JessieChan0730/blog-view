@@ -23,7 +23,8 @@
     :loading="loading"
     max-width="320"
   >
-    <v-card-text>
+    <v-card-text class="d-flex align-center">
+      <i class="iconfont icon-remen mr-2"></i>
       热门文章
     </v-card-text>
     <v-divider class="mb-2" color="#fbbd08" :thickness="2" />
@@ -57,7 +58,7 @@
 
 <style scoped lang="scss">
 .bg-color {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   color: #fff;
 }
 </style>

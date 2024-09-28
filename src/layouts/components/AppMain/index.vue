@@ -4,7 +4,9 @@
 
 <template>
   <v-main class="app-container">
-    <router-view />
+    <v-slide-x-transition>
+      <router-view />
+    </v-slide-x-transition>
   </v-main>
 </template>
 

@@ -18,7 +18,8 @@
     :loading="loading"
     max-width="320"
   >
-    <v-card-text>
+    <v-card-text class="d-flex align-center">
+      <i class="iconfont icon-biaoqian mr-2"></i>
       标签云
     </v-card-text>
     <v-divider class="mb-2" color="#fbbd08" :thickness="2" />

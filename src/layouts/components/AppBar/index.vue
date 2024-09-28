@@ -9,6 +9,7 @@
   import Bus from '@/utils/sub'
 
   const drawer = shallowRef(false)
+  const router = useRouter()
 
   const routersStore = useRoutersStore()
   const searchContent = ref<string>('')
@@ -39,6 +40,10 @@
     Bus.$emit('searchContent', searchContent.value)
   }
 
+  const backToHome = () => {
+    router.replace('/')
+  }
+
 </script>
 
 <template>
@@ -56,7 +61,7 @@
         max-width="40"
         src="https://cdn.vuetifyjs.com/docs/images/logos/v.svg"
       />
-      <v-app-bar-title class="w-25 font-weight-bold font-weight-black d-sm-none d-lg-block d-md-block">{{ settings.frontSetting.website_title.value }}</v-app-bar-title>
+      <v-app-bar-title class="w-25 font-weight-bold font-weight-black d-sm-none d-lg-block d-md-block" @click="backToHome" style="cursor: pointer">{{ settings.frontSetting.website_title.value }}</v-app-bar-title>
     </div>
 
     <template v-if="$vuetify.display.mdAndUp">

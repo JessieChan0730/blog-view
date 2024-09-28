@@ -69,12 +69,12 @@ export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '/link',
     component: Layout,
-    redirect: '/link/home',
+    redirect: '/link/index',
     name: 'Link',
     meta: { title: '友情链接' },
     children: [
       {
-        path: 'home',
+        path: 'index',
         component: () => import('@/pages/link/index.vue'),
       },
     ],

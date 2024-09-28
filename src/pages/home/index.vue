@@ -142,7 +142,6 @@
       />
       <v-card v-else class="w-100" style="height: 636px">
         <v-empty-state
-
           icon="mdi-magnify"
           text="暂时还没有任何相关的博客，请静静等待作者发布博客吧"
           title="暂无博客"
