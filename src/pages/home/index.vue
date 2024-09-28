@@ -3,6 +3,7 @@
   import { Pagination } from '@/api/pagination'
   import { useScroll } from '@/hooks/scroll'
   import { useFrontSettings } from '@/stores/modules/settings'
+  import Bus from '@/utils/sub'
 
   const frontSetting = useFrontSettings()
   const router = useRouter()
@@ -23,15 +24,20 @@
     await frontSetting.get()
     await loadData({ page: 1 })
   })
+
+  onBeforeUnmount(() => {
+    Bus.$off('searchContent')
+  })
+
   const greeting = computed(() => {
-    const now = new Date();
-    const hours = now.getHours();
-    if (hours < 12){
+    const now = new Date()
+    const hours = now.getHours()
+    if (hours < 12) {
       return '早上好，愿您的每一天都像阳光般灿烂'
-    }else if(hours < 16){
-      return   '下午好，愿您有个美好的下午'
-    }else {
-      return  '晚上好，愿您有个美丽的梦乡'
+    } else if (hours < 16) {
+      return '下午好，愿您有个美好的下午'
+    } else {
+      return '晚上好，愿您有个美丽的梦乡'
     }
   })
 
@@ -46,6 +52,13 @@
   const viewArticle = (id: number) => {
     router.push(`/blog/${id}`)
   }
+  /**
+   * 订阅
+   */
+  Bus.$on('searchContent', async (searchContent:string) => {
+    await loadData({ page: 1, search: searchContent })
+    useScroll(1014)
+  })
 </script>
 
 <template>
@@ -121,11 +134,20 @@
         </v-card>
       </v-hover>
       <v-pagination
+        v-if="articles.results.length !== 0"
         v-model="page"
         class="mx-auto mt-5"
         :length="length"
         :total-visible="7"
       />
+      <v-card v-else class="w-100" style="height: 636px">
+        <v-empty-state
+
+          icon="mdi-magnify"
+          text="暂时还没有任何相关的博客，请静静等待作者发布博客吧"
+          title="暂无博客"
+        />
+      </v-card>
     </template>
   </Container>
 </template>

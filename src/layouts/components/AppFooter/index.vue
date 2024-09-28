@@ -1,14 +1,25 @@
 <script setup lang="ts">
+  import { Article, ArticleAPI } from '@/api/article'
   import { useFrontSettings } from '@/stores/modules/settings'
   import wechart from '@/assets/image/wechart.jpg'
   import { Toast } from '@/utils/toast'
+
   const settings = useFrontSettings()
+  const articles = ref<Article[]>([])
+  const router = useRouter()
+
   onMounted(async () => {
     await settings.get()
+    const resArticle = await ArticleAPI.getArticles()
+    if (resArticle) {
+      articles.value = resArticle.results.splice(0, 3)
+    }
   })
+
   const intoGithub = () => {
     window.location.href = 'https://github.com/JessieChan0730/blog-view'
   }
+
   const copy = async (content:string, successMsg:string) => {
     try {
       await navigator.clipboard.writeText(content)
@@ -28,9 +39,14 @@
       }
     }
   }
+
   const share = () => {
     const url = window.location.href
     copy(url, '复制网站链接成功')
+  }
+
+  const viewArticle = (id: number) => {
+    router.push(`/blog/${id}`)
   }
 </script>
 
@@ -105,9 +121,13 @@
           class="d-flex flex-column justify-center align-center text-grey-lighten-1 text-sm-body-2 ma-1"
           style="list-style: none"
         >
-          <li class="my-1 list-hover">关于我从俄乌局势联想到密码学这档事</li>
-          <li class="my-1">关于我从俄乌局势联想到密码学这档事</li>
-          <li class="my-1">2023 年度总结</li>
+          <li
+            v-for="article in articles"
+            :key="article.id"
+            class="my-1 list-hover omit"
+            style="cursor: pointer"
+            @click="viewArticle(article.id)"
+          >{{ article.title }}</li>
         </ul>
       </v-col>
       <v-col :lg="2">
@@ -143,5 +163,10 @@
 <style scoped lang="scss">
 .list-hover:hover {
   color: white;
+}
+.omit {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

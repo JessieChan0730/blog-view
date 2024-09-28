@@ -32,6 +32,7 @@ export interface ArticleParams {
   category?:number;
   search?:string;
   page?:string | number;
+  ordering?:string;
 }
 
 export interface Article {

@@ -6,9 +6,12 @@
   import path from 'path-browserify'
   import { shallowRef } from 'vue'
   import { RouteRecordRaw } from 'vue-router'
+  import Bus from '@/utils/sub'
+
   const drawer = shallowRef(false)
 
   const routersStore = useRoutersStore()
+  const searchContent = ref<string>('')
   const settings = useFrontSettings()
   const routes = ref<RouteRecordRaw[]>()
   onMounted(async () => {
@@ -31,6 +34,9 @@
     // 完整绝对路径 = 父级路径(/system) + 路由路径(/user)
     const fullPath = path.resolve(basePath, routePath)
     return fullPath
+  }
+  const search = () => {
+    Bus.$emit('searchContent', searchContent.value)
   }
 
 </script>
@@ -64,14 +70,16 @@
     </template>
     <v-spacer />
     <v-text-field
+      v-model="searchContent"
       :counter="5"
-      density="compact"
+      :density="'compact'"
       hide-details
       label="搜索文章"
       max-width="300"
       prepend-inner-icon="mdi-magnify"
       required
       variant="solo-inverted"
+      @keyup.enter="search"
     />
 
     <template #append>

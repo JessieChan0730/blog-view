@@ -4,6 +4,7 @@
   import { Pagination } from '@/api/pagination'
   import { useScroll } from '@/hooks/scroll'
   import { useFrontSettings } from '@/stores/modules/settings'
+  import Bus from '@/utils/sub'
   const frontSetting = useFrontSettings()
   const route = useRoute()
   const router = useRouter()
@@ -36,6 +37,10 @@
     categoryId.value = parseId(route.fullPath)
   })
 
+  onBeforeUnmount(() => {
+    Bus.$off('searchContent')
+  })
+
   watch([() => route.fullPath], () => {
     categoryId.value = parseId(route.fullPath)
   })
@@ -52,6 +57,13 @@
    */
   watch(() => page.value, async () => {
     await loadArticleList({ category: categoryId.value as number, page: page.value })
+    useScroll(60)
+  })
+  /**
+   * 订阅
+   */
+  Bus.$on('searchContent', async (searchContent:string) => {
+    await loadArticleList({ category: categoryId.value as number, page: 1, search: searchContent })
     useScroll(60)
   })
 
@@ -144,9 +156,9 @@
         <v-empty-state
 
           icon="mdi-magnify"
-          text="该分类下暂时还没有任何博客，请静静等待作者发布博客吧"
+          text="暂时还没有任何相关的博客，请静静等待作者发布博客吧"
           title="暂无博客"
-        ></v-empty-state>
+        />
       </v-card>
     </template>
   </Container>
