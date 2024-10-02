@@ -22,7 +22,7 @@ export class ArticleAPI {
 
   static viewArticle (id:number | string) {
     return request< any, Article>({
-      url: `${ARTICLE_BASE_URL}/${id}`,
+      url: `${ARTICLE_BASE_URL}/${id}/`,
       method: 'get',
     })
   }

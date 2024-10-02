@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { User, UserAPI } from '@/api/user'
-
+  const staticUrl = import.meta.env.VITE_APP_STATIC_URL
   const loading = ref(false)
   const user = reactive<User>({
     nickname: '',
@@ -48,7 +48,7 @@
     <v-img
       cover
       height="300"
-      :src="user.avatar"
+      :src="`${staticUrl}/${user.avatar}`"
     />
 
     <v-card-item class="d-flex flex-column justify-center align-center">

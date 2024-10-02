@@ -53,7 +53,7 @@
       required: true,
     },
   })
-
+  const staticUrl = import.meta.env.VITE_APP_STATIC_URL
   const emit = defineEmits(['load'])
 
   const currentPage = ref(1)
@@ -152,7 +152,7 @@
           class="align-end"
           cover
           gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-          :src="image.image"
+          :src="`${staticUrl}/${image.image}`"
         >
           <v-card-title class="text-white" v-text="image.description" />
         </v-img>

@@ -13,7 +13,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
-  const env = loadEnv(mode, process.cwd());
+  const env = loadEnv(mode, process.cwd())
   return {
     plugins: [
       VueRouter({
@@ -48,7 +48,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       }),
       Fonts({
         google: {
-          families: [ {
+          families: [{
             name: 'Roboto',
             styles: 'wght@100;300;400;500;700;900',
           }],
@@ -73,9 +73,22 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     server: {
       port: Number(env.VITE_APP_PORT),
       // 允许IP访问
-      host: "0.0.0.0",
+      host: '0.0.0.0',
       // 运行是否自动打开浏览器
       open: true,
+      proxy: {
+        [env.VITE_APP_BASE_API]: {
+          changeOrigin: true,
+          // 接口地址
+          target: env.VITE_APP_API_URL,
+          rewrite: (path) =>
+            path.replace(new RegExp("^" + env.VITE_APP_BASE_API), ""),
+        },
+        [env.VITE_APP_STATIC_URL]: {
+          changeOrigin: true,
+          target: env.VITE_APP_API_URL,
+        },
+      }
     },
   }
 })
