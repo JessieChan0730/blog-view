@@ -1,5 +1,4 @@
 import { FrontSetting, SettingsAPI } from '@/api/settings'
-import { FRONT_SETTING_KEY } from '@/enums/CacheEnum'
 import { defineStore } from 'pinia'
 
 export const useFrontSettings = defineStore('frontSetting', () => {
@@ -50,33 +49,18 @@ export const useFrontSettings = defineStore('frontSetting', () => {
 
   function get () {
     return new Promise<FrontSetting>((resolve, reject) => {
-      if (
-        localStorage.getItem(FRONT_SETTING_KEY) &&
-        localStorage.getItem(FRONT_SETTING_KEY)?.trim() !== '' &&
-        localStorage.getItem(FRONT_SETTING_KEY)?.trim() !== 'undefined'
-      ) {
-        const frontSettingsObj = JSON.parse(
-          localStorage.getItem(FRONT_SETTING_KEY) as string
-        ) as FrontSetting
-        Object.assign(frontSetting, { ...frontSettingsObj })
-        resolve(frontSettingsObj)
-      } else {
-        SettingsAPI.getSettings()
-          .then(data => {
-            Object.assign(frontSetting, { ...data })
-            const frontSettingJSON = JSON.stringify(data)
-            localStorage.setItem(FRONT_SETTING_KEY, frontSettingJSON)
-            resolve(data)
-          })
-          .catch(error => {
-            reject(error)
-          })
-      }
+      SettingsAPI.getSettings()
+        .then(data => {
+          Object.assign(frontSetting, { ...data })
+          resolve(data)
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   }
 
   async function refresh () {
-    localStorage.removeItem(FRONT_SETTING_KEY)
     await get()
   }
 
