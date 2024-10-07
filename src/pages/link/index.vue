@@ -2,6 +2,7 @@
   import { LinkAPI, LinksForm, LinksVo, StatementAPI } from '@/api/link'
   import { Toast } from '@/utils/toast'
   import { Ref } from 'vue'
+  import connection from '@/assets/image/connection.svg'
 
   const links = ref<LinksVo[]>([])
   const statement = ref('')
@@ -111,14 +112,14 @@
 <template>
   <Container>
     <template #default>
-      <v-card v-if="links.length !== 0 && statement != ''" class="w-100">
+      <v-card class="w-100">
         <v-card-item class="d-flex justify-center align-center">
           <v-card-title>
             小伙伴们
           </v-card-title>
         </v-card-item>
         <v-divider class="mb-2" />
-        <v-card-item>
+        <v-card-item v-if="links.length !== 0 && statement != ''">
           <v-row>
             <v-col
               v-for="link in links"
@@ -144,6 +145,13 @@
               </v-card>
             </v-col>
           </v-row>
+        </v-card-item>
+        <v-card-item v-else>
+          <v-empty-state
+            :image="connection"
+            text="暂无友情链接，赶快来申请一个吧"
+            title="暂无友情链接"
+          />
         </v-card-item>
         <v-divider class="mb-2" color="#00b5ad" opacity="100" :thickness="2" />
         <v-card-item>
@@ -207,9 +215,9 @@
         </v-card-item>
         <v-divider color="#00b5ad" opacity="100" :thickness="2" />
       </v-card>
-      <v-card v-else class="w-100">
-        <NetWorkError :retry-fun="initData" />
-      </v-card>
+<!--            <v-card v-else class="w-100">-->
+<!--              <NetWorkError :retry-fun="initData" />-->
+<!--            </v-card>-->
     </template>
   </Container>
 </template>

@@ -4,7 +4,7 @@ const CATEGORY_BASE_API = '/api/front/category'
 export class CategoryAPI {
   static getCategoryDetail (id:string | number) {
     return request<any, Category>({
-      url: `${CATEGORY_BASE_API}/${id}`,
+      url: `${CATEGORY_BASE_API}/${id}/`,
       method: 'get',
     })
   }

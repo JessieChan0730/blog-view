@@ -3,7 +3,7 @@
   import { UserAPI } from '@/api/user'
 
   const route = useRoute()
-  const authorName  = ref('');
+  const authorName = ref('')
   const article = reactive<Article>({
     id: 1,
     title: '',
@@ -27,8 +27,8 @@
     if (response) {
       Object.assign(article, { ...response })
     }
-    if (resUserinfo){
-       authorName.value = resUserinfo.nickname
+    if (resUserinfo) {
+      authorName.value = resUserinfo.nickname
     }
   })
 
