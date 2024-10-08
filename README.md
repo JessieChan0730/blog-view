@@ -9,6 +9,8 @@
 	<img src="https://img.shields.io/badge/license-MIT-blue">
 </p>
 
+![](https://foruda.gitee.com/images/1708618984641188532/a7cca095_716974.png "rainbow.png")
+
 ## 🙂 简介
 
 基于Django5 + vue 开发的博客系统，此仓库为「博客系统的客户端」，目前博客处于起步阶段，很多功能暂未开发，当然此项目会持续维护，大部分功能会在后续版本中更新，如果喜欢的话不妨点个start支持
