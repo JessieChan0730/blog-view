@@ -18,7 +18,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: '/dashboard',
     name: 'Dashboard',
-    meta: { title: '主页' },
+    meta: { title: '主页', icon: 'mdi-home-outline' },
     children: [
       {
         path: 'dashboard',
@@ -39,6 +39,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     name: 'Category',
     meta: {
+      icon: 'mdi-shape-plus-outline',
       keepAlive: false,
       title: '分类',
       dynamic: true,
@@ -58,7 +59,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: '/photo/index',
     name: 'Photo',
-    meta: { title: '照片墙' },
+    meta: { title: '照片墙', icon: 'mdi-camera' },
     children: [
       {
         path: 'index',
@@ -71,7 +72,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: '/link/index',
     name: 'Link',
-    meta: { title: '友情链接' },
+    meta: { title: '友情链接', icon: 'mdi-link-variant' },
     children: [
       {
         path: 'index',
@@ -84,7 +85,7 @@ export const constantRoutes: RouteRecordRaw[] = [
     component: Layout,
     redirect: '/about/index',
     name: 'About',
-    meta: { title: '关于本站' },
+    meta: { title: '关于本站', icon: 'mdi-information-outline' },
     children: [
       {
         path: 'index',
@@ -102,6 +103,19 @@ export const constantRoutes: RouteRecordRaw[] = [
       {
         path: ':id',
         component: () => import('@/pages/article/detail.vue'),
+      },
+    ],
+  },
+  {
+    path: '/author',
+    component: Layout,
+    redirect: '/author/index',
+    name: 'Author',
+    meta: { hidden: true },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/mobile/author/index.vue'),
       },
     ],
   },

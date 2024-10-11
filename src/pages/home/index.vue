@@ -4,10 +4,12 @@
   import { useScroll } from '@/hooks/scroll'
   import { useFrontSettings } from '@/stores/modules/settings'
   import Bus from '@/utils/sub'
+  import { useDisplay } from 'vuetify'
 
   const frontSetting = useFrontSettings()
   const router = useRouter()
   const page = ref<number>(1)
+  const { mobile } = useDisplay()
   const articles = reactive<Pagination<Article>>({
     count: 0,
     next: '',
@@ -43,7 +45,11 @@
 
   watch(() => page.value, async () => {
     await loadData({ page: page.value })
-    useScroll(1014)
+    if (mobile.value) {
+      useScroll(0)
+    } else {
+      useScroll(1014)
+    }
   })
   const length = computed(() => {
     return Math.ceil(articles.count / Number(frontSetting.frontSetting.blog.page_size.value))
@@ -57,7 +63,11 @@
    */
   Bus.$on('searchContent', async (searchContent:string) => {
     await loadData({ page: 1, search: searchContent })
-    useScroll(1014)
+    if (mobile.value) {
+      useScroll(0)
+    } else {
+      useScroll(1014)
+    }
   })
 </script>
 
@@ -95,7 +105,7 @@
           <v-img
             class="border-b-sm"
             cover
-            height="360px"
+            :height="$vuetify.display.smAndDown ? 250 : 360"
             :src="article.cover_url"
           />
 

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+  import { User, UserAPI } from '@/api/user'
   import AppBarItem from '@/layouts/components/AppBar/components/AppBarItem.vue'
+  import AppBarItemMobile from '@/layouts/components/AppBar/components/AppBarItemMobile.vue'
   import { useRoutersStore } from '@/stores'
   import { useFrontSettings } from '@/stores/modules/settings'
   import { isExternal } from '@/utils'
@@ -7,16 +9,36 @@
   import { shallowRef } from 'vue'
   import { RouteRecordRaw } from 'vue-router'
   import Bus from '@/utils/sub'
-
+  const staticUrl = import.meta.env.VITE_APP_STATIC_URL
   const drawer = shallowRef(false)
   const router = useRouter()
 
   const routersStore = useRoutersStore()
   const searchContent = ref<string>('')
   const settings = useFrontSettings()
+
+  const user = reactive<User>({
+    nickname: '',
+    signature: '',
+    avatar: '',
+    more_info: {
+      hobby: [],
+      media: {
+        github: '',
+        csdn: '',
+        tiktok: '',
+        bilibili: '',
+      },
+    },
+  })
+
   const routes = ref<RouteRecordRaw[]>()
   onMounted(async () => {
     await settings.get()
+    const response = await UserAPI.getUserInfo()
+    if (response) {
+      Object.assign(user, { ...response })
+    }
     routes.value = routersStore.getRouters()
   })
   /**
@@ -61,7 +83,7 @@
         max-width="40"
         src="https://cdn.vuetifyjs.com/docs/images/logos/v.svg"
       />
-      <v-app-bar-title class="w-25 font-weight-bold font-weight-black d-sm-none d-lg-block d-md-block" @click="backToHome" style="cursor: pointer">{{ settings.frontSetting.website_title.value }}</v-app-bar-title>
+      <v-app-bar-title v-if="$vuetify.display.mdAndUp" class="w-25 font-weight-bold font-weight-black d-sm-none d-lg-block d-md-block" style="cursor: pointer" @click="backToHome">{{ settings.frontSetting.website_title.value }}</v-app-bar-title>
     </div>
 
     <template v-if="$vuetify.display.mdAndUp">
@@ -94,6 +116,7 @@
       />
     </template>
   </v-app-bar>
+  <!--路由控制-->
   <v-navigation-drawer
     v-if="$vuetify.display.smAndDown"
     v-model="drawer"
@@ -102,69 +125,20 @@
     width="355"
   >
     <v-list class="py-0" slim>
-      <v-list-item link prepend-icon="mdi-home-outline" title="Dashboard" />
-
-      <v-list-group
-        prepend-icon="mdi-account-multiple-outline"
-        title="Customers"
-      >
-        <template #activator="{ props: activatorProps }">
-          <v-list-item v-bind="activatorProps" />
-        </template>
-
-        <v-list-item
-          link
-          prepend-icon="mdi-account-plus-outline"
-          title="Create New"
-        />
-
-        <v-list-group prepend-icon="mdi-magnify" title="Search">
-          <template #activator="{ props: activatorProps }">
-            <v-list-item v-bind="activatorProps" />
-          </template>
-
-          <v-list-item
-            link
-            prepend-icon="mdi-account-outline"
-            title="By Name"
-          />
-
-          <v-list-item
-            link
-            prepend-icon="mdi-email-outline"
-            title="By Email"
-          />
-
-          <v-list-item
-            link
-            prepend-icon="mdi-phone-outline"
-            title="By Phone"
-          />
-        </v-list-group>
-      </v-list-group>
-
-      <v-list-item link prepend-icon="mdi-calendar" title="Calendar" />
-
-      <v-list-item link prepend-icon="mdi-poll" title="Analytics" />
-
-      <v-divider />
-
-      <v-list-item link prepend-icon="mdi-inbox-outline" title="Inbox" />
-
-      <v-list-item
-        link
-        prepend-icon="mdi-bell-outline"
-        title="Notifications"
+      <AppBarItemMobile
+        v-for="route in routes"
+        :key="route.path"
+        :base-path="resolvePath('',route.path)"
+        :item="route"
       />
-
       <v-divider />
-
       <v-list-item
         lines="two"
         link
-        prepend-avatar="https://vuetifyjs.b-cdn.net/docs/images/avatars/planetary-subscriber.png"
-        subtitle="Vuetify Engineer"
-        title="John Leider"
+        :prepend-avatar="`${staticUrl}/${user.avatar}`"
+        subtitle="关于作者"
+        :title="user.nickname"
+        @click="()=> router.push('/author')"
       />
     </v-list>
   </v-navigation-drawer>

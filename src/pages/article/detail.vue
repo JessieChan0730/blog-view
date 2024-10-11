@@ -58,10 +58,10 @@
       <v-card class="w-100">
         <div class="review-container">
           <h2 class="blog-title">{{ article.title }}</h2>
-          <div class="blog-info">
+          <div :class="$vuetify.display.smAndDown ? 'blog-info-mobile' : 'blog-info'">
             <div class="create-data">发表时间: {{ article.create_date }}</div>
             <div class="words-num">字数: {{ contentLength }}字</div>
-            <div class="words-num">阅读时长: {{ readingTime }}分钟</div>
+            <div class="words-times">阅读时长: {{ readingTime }}分钟</div>
           </div>
 
           <div
@@ -126,13 +126,26 @@
     align-items: center;
     justify-content: space-around;
     margin: 0 auto;
-    font-size: 14px;
+    font-size: 0.9rem;
     color: gray;
 
     & > div {
       padding: 12px 8px;
   }
 }
+
+  .blog-info-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 auto;
+    font-size: 0.78rem;
+    color: gray;
+
+    & > div {
+      padding: 10px 4px;
+    }
+  }
 
   .blog-content {
     margin-bottom: 12px;

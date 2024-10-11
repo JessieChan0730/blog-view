@@ -20,7 +20,7 @@
     window.location.href = 'https://github.com/JessieChan0730/blog-view'
   }
 
-  const copy = async (content:string, successMsg:string) => {
+  const copy = async (content: string, successMsg: string) => {
     try {
       await navigator.clipboard.writeText(content)
       Toast.success(successMsg)
@@ -113,8 +113,8 @@
         </template>
       </v-tooltip>
     </div>
-    <v-row class="w-66 d-flex align-center ma-2 mb-3">
-      <v-col lg="1" />
+    <v-row v-if="!$vuetify.display.smAndDown" :class="['d-flex', 'align-center', 'ma-2', 'mb-3','w-66']">
+      <v-col :lg="1" />
       <v-col class="pt-0 my-2" :lg="4">
         最新博客
         <ul
@@ -127,7 +127,8 @@
             class="my-1 list-hover omit"
             style="cursor: pointer"
             @click="viewArticle(article.id)"
-          >{{ article.title }}</li>
+          >{{ article.title }}
+          </li>
         </ul>
       </v-col>
       <v-col :lg="2">
@@ -143,8 +144,9 @@
         </div>
         <div class="d-flex justify-end">——《长歌行》</div>
       </v-col>
-      <v-col lg="1" />
+      <v-col :lg="1" />
     </v-row>
+    <v-divider v-else length="400" :thickness="1" class="my-5" />
     <div class="text-sm-body-2 mb-2">
       {{ settings.frontSetting.copyright.value }}
       |
@@ -164,6 +166,7 @@
 .list-hover:hover {
   color: white;
 }
+
 .omit {
   overflow: hidden;
   text-overflow: ellipsis;

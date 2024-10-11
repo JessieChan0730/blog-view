@@ -5,7 +5,9 @@
   import { useScroll } from '@/hooks/scroll'
   import { useFrontSettings } from '@/stores/modules/settings'
   import Bus from '@/utils/sub'
+  import { useDisplay } from 'vuetify'
   const frontSetting = useFrontSettings()
+  const { mobile } = useDisplay()
   const route = useRoute()
   const router = useRouter()
   const page = ref(1)
@@ -57,14 +59,22 @@
    */
   watch(() => page.value, async () => {
     await loadArticleList({ category: categoryId.value as number, page: page.value })
-    useScroll(60)
+    if (mobile.value) {
+      useScroll(0)
+    } else {
+      useScroll(60)
+    }
   })
   /**
    * 订阅
    */
   Bus.$on('searchContent', async (searchContent:string) => {
     await loadArticleList({ category: categoryId.value as number, page: 1, search: searchContent })
-    useScroll(60)
+    if (mobile.value) {
+      useScroll(0)
+    } else {
+      useScroll(60)
+    }
   })
 
   const parseId = (path:string) => {
@@ -107,7 +117,7 @@
           <v-img
             class="border-b-sm"
             cover
-            height="360px"
+            :height="$vuetify.display.smAndDown ? 250 : 360"
             :src="article.cover_url"
           />
 

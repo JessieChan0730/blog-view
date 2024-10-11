@@ -16,27 +16,27 @@
     md: {
       type: Number,
       required: false,
-      default: 2,
+      default: 3,
     },
     sm: {
       type: Number,
       required: false,
+      default: 2,
+    },
+    mobile: {
+      type: Number,
+      required: false,
       default: 1,
     },
-    maxWidth: {
+    lgWidth: {
       type: String,
       required: false,
       default: '1200px',
     },
-    minWidth: {
+    mbWidth: {
       type: String,
       required: false,
-      default: '800px',
-    },
-    width: {
-      type: String,
-      required: false,
-      default: '1200px',
+      default: '21rem',
     },
     smWidth: {
       type: String,
@@ -58,14 +58,13 @@
 
   const currentPage = ref(1)
 
-  const loading = ref(true)
+  const loading = ref(false)
 
   const haveMoreData = ref(true)
 
   const style = reactive<any>({
-    maxWidth: '',
     width: '',
-    minWidth: '',
+    maxWidth: '',
     columnCount: 3,
     '-moz-column-count': 3,
     '-webkit-column-count': 3,
@@ -75,6 +74,7 @@
     lg,
     md,
     sm,
+    mobile,
   } = useDisplay()
 
   const setColumn = (cols: number) => {
@@ -85,30 +85,25 @@
 
   const setWidth = (width: string) => {
     style.width = width
+    style.maxWidth = width
   }
 
-  const init = () => {
-    style.maxWidth = props.maxWidth
-    style.minWidth = props.minWidth
-    style.width = props.width
-  }
-
-  watch([() => lg.value, () => md.value, () => sm.value], () => {
+  watch([() => lg.value, () => md.value, () => sm.value, () => mobile.value], () => {
     if (lg.value) {
       setColumn(props.lg)
-      setWidth(props.width)
+      setWidth(props.lgWidth)
     } else if (md.value) {
       setColumn(props.md)
       setWidth(props.mdWidth)
     } else if (sm.value) {
       setColumn(props.sm)
       setWidth(props.smWidth)
+    } else if (mobile.value) {
+      setColumn(props.mobile)
+      setWidth(props.mbWidth)
     }
-  })
-
-  onMounted(() => {
-    init()
-    loading.value = false
+  }, {
+    immediate: true,
   })
 
   const load = () => {
@@ -122,7 +117,7 @@
     emit('load', currentPage.value, loading)
   }
 
-  const share = async (url:string) => {
+  const share = async (url: string) => {
     try {
       await navigator.clipboard.writeText(url)
       Toast.success('复制图片链接成功')
@@ -148,7 +143,7 @@
     <div v-for="image,index in data" :key="index" class="item">
       <v-card hover>
         <v-img
-          alt="this is my photo"
+          alt="error photo"
           class="align-end"
           cover
           gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
@@ -205,9 +200,10 @@
 </template>
 
 <style scoped lang="scss">
-.empty{
+.empty {
   min-height: 700px;
 }
+
 .waterfall-box {
   min-height: 900px;
   margin: 1rem auto;
