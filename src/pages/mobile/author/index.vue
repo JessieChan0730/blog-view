@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { User, UserAPI } from '@/api/user'
-
+  import { useUserStore } from '@/stores'
+  const userStore = useUserStore()
   const user = reactive<User>({
     nickname: '',
     signature: '',
@@ -17,13 +18,12 @@
   })
   const trySuccess = (response:any) => {
     if (response) {
+      Object.assign(user, { ...response })
     }
   }
   onMounted(async () => {
-    const response = await UserAPI.getUserInfo()
-    if (response) {
-      Object.assign(user, { ...response })
-    }
+    const userInfo = await userStore.get()
+    Object.assign(user, userInfo)
   })
 
 </script>

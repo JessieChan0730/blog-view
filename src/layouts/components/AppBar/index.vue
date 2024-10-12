@@ -2,7 +2,7 @@
   import { User, UserAPI } from '@/api/user'
   import AppBarItem from '@/layouts/components/AppBar/components/AppBarItem.vue'
   import AppBarItemMobile from '@/layouts/components/AppBar/components/AppBarItemMobile.vue'
-  import { useRoutersStore } from '@/stores'
+  import { useRoutersStore, useUserStore } from '@/stores'
   import { useFrontSettings } from '@/stores/modules/settings'
   import { isExternal } from '@/utils'
   import path from 'path-browserify'
@@ -16,7 +16,7 @@
   const routersStore = useRoutersStore()
   const searchContent = ref<string>('')
   const settings = useFrontSettings()
-
+  const userStore = useUserStore()
   const user = reactive<User>({
     nickname: '',
     signature: '',
@@ -35,10 +35,8 @@
   const routes = ref<RouteRecordRaw[]>()
   onMounted(async () => {
     await settings.get()
-    const response = await UserAPI.getUserInfo()
-    if (response) {
-      Object.assign(user, { ...response })
-    }
+    const userInfo = await userStore.get()
+    Object.assign(user, userInfo)
     routes.value = routersStore.getRouters()
   })
   /**

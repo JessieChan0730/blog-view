@@ -1,7 +1,9 @@
 <script setup lang="ts">
-  import { User, UserAPI } from '@/api/user'
+  import { User } from '@/api/user'
+  import { useUserStore } from '@/stores'
   const staticUrl = import.meta.env.VITE_APP_STATIC_URL
   const loading = ref(false)
+  const userStore = useUserStore()
   const user = reactive<User>({
     nickname: '',
     signature: '',
@@ -18,10 +20,8 @@
   })
 
   onMounted(async () => {
-    const response = await UserAPI.getUserInfo()
-    if (response) {
-      Object.assign(user, { ...response })
-    }
+    const userInfo = await userStore.get()
+    Object.assign(user, userInfo)
   })
 
   const checkMedia = (link:string) => {
