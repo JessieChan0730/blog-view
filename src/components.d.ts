@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Comments: typeof import('./components/Comments/index.vue')['default']
     Container: typeof import('./components/Container/index.vue')['default']
     HotBlog: typeof import('./components/HotBlog/index.vue')['default']
     ImageWaterfall: typeof import('./components/ImageWaterfall/index.vue')['default']

@@ -98,6 +98,8 @@
               </li>
             </ul>
           </div>
+          <!--评论-->
+          <Comments />
         </div>
       </v-card>
     </template>
