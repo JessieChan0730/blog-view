@@ -18,6 +18,7 @@ export interface FrontSetting {
   tags: FrontTagsSettings;
   blog: FrontBlogSettings;
   photo_wall: PaginationSetting;
+  comments: PaginationSetting;
 }
 
 export interface Setting {

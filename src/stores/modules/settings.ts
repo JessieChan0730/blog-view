@@ -45,6 +45,16 @@ export const useFrontSettings = defineStore('frontSetting', () => {
         value: '',
       },
     },
+    comments: {
+      page_size: {
+        id: 0,
+        value: '',
+      },
+      max_page_size: {
+        id: 0,
+        value: '',
+      },
+    },
   })
 
   function get () {

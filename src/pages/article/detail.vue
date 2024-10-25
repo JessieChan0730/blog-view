@@ -99,7 +99,8 @@
             </ul>
           </div>
           <!--评论-->
-          <Comments />
+          <!--添加一个key进行重新渲染组件-->
+          <Comments :key="route.params.id" :article-id="route.params.id" />
         </div>
       </v-card>
     </template>
