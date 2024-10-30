@@ -14,6 +14,8 @@
       required: true,
     },
   })
+  // 是否处于加载中状态
+  const loading = ref(false)
   const { mobile } = useDisplay()
   // 当前分页
   const page = ref<number>(1)
@@ -67,9 +69,11 @@
   })
 
   const loadComments = async (params?: CommentsParams) => {
+    loading.value = true
     const response = await CommentsAPI.getComments(params)
     if (response) {
       Object.assign(commentsPagination, response)
+      loading.value = false
     }
   }
   // 重设表单
@@ -116,16 +120,56 @@
   }
 
   const publish = async () => {
-    const response = await CommentsAPI.publishComments(commentsForms)
-    if (response) {
-      await loadComments({
-        page: page.value,
-        article_pk: props.articleId,
-      })
-      resetForm()
+    const errorMessage = validateForm(commentsForms)
+    if (errorMessage) {
+      Toast.error(errorMessage)
     } else {
-      Toast.error('发表评论失败，请联系管理员')
+      const response = await CommentsAPI.publishComments(commentsForms)
+      if (response) {
+        await loadComments({
+          page: page.value,
+          article_pk: props.articleId,
+        })
+        resetForm()
+      } else {
+        Toast.error('发表评论失败，请联系管理员')
+      }
     }
+  }
+
+  const isValidEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return regex.test(email)
+  }
+
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url)
+      return true
+    } catch (_) {
+      return false
+    }
+  }
+  function validateForm (form: CommentsForms): string | null {
+    const trimmedNickname = form.nickname.trim()
+    const trimmedContent = form.content.trim()
+    const trimmedEmail = form.email.trim()
+    const trimmedAvatar = form.avatar.trim()
+    if (trimmedContent.length === 0 || trimmedContent.length > 255) {
+      return '内容长度必须在 1 到 255 之间'
+    }
+    if (trimmedNickname.length === 0 || trimmedNickname.length > 40) {
+      return '昵称长度必须在 1 到 40 之间'
+    }
+    if (trimmedEmail.length === 0 || !isValidEmail(trimmedEmail)) {
+      return '邮箱格式错误'
+    }
+
+    if (trimmedAvatar.length === 0 || !isValidUrl(trimmedAvatar)) {
+      return '头像格式错误'
+    }
+
+    return null
   }
 </script>
 
@@ -195,13 +239,26 @@
       <h3 v-show="comments_length > 0">评论列表 | 共 {{ comments_length }} 条评论</h3>
     </v-row>
     <v-divider />
+    <div v-if="loading" id="loading-box" class="d-flex justify-center align-center" style="min-height: 300px">
+      <v-progress-circular color="primary" indeterminate :size="76" />
+    </div>
+    <!--    <v-overlay-->
+    <!--      class="align-center justify-center"-->
+    <!--      :model-value="loading"-->
+    <!--    >-->
+    <!--      <v-progress-circular-->
+    <!--        color="primary"-->
+    <!--        indeterminate-->
+    <!--        size="64"-->
+    <!--      />-->
+    <!--    </v-overlay>-->
     <v-empty-state
-      v-show="comments_length === 0"
+      v-show="!loading && comments_length === 0"
       icon="mdi-magnify"
       text="赶紧来抢占沙发吧"
       title="暂无评论"
     />
-    <v-list class="comments">
+    <v-list v-if="!loading" class="comments">
       <v-list-item v-for="comment in commentsPagination.results" :key="comment.id" class="mb-2 comment">
         <v-row no-gutters>
           <v-col :lg="1" :md="1">
@@ -342,7 +399,7 @@
       </v-list-item>
     </v-list>
     <v-pagination
-      v-show="comments_length > 0"
+      v-show="!loading && comments_length > 0"
       v-model="page"
       class="mx-auto"
       :length="page_length"
