@@ -192,9 +192,15 @@
       </v-row>
     </div>
     <v-row no-gutters>
-      <h3>评论列表 | 共 {{ comments_length }} 条评论</h3>
+      <h3 v-show="comments_length > 0">评论列表 | 共 {{ comments_length }} 条评论</h3>
     </v-row>
     <v-divider />
+    <v-empty-state
+      v-show="comments_length === 0"
+      icon="mdi-magnify"
+      text="赶紧来抢占沙发吧"
+      title="暂无评论"
+    />
     <v-list class="comments">
       <v-list-item v-for="comment in commentsPagination.results" :key="comment.id" class="mb-2 comment">
         <v-row no-gutters>
@@ -335,7 +341,13 @@
         </div>
       </v-list-item>
     </v-list>
-    <v-pagination v-model="page" class="mx-auto" :length="page_length" total-visible="5" />
+    <v-pagination
+      v-show="comments_length > 0"
+      v-model="page"
+      class="mx-auto"
+      :length="page_length"
+      total-visible="5"
+    />
   </div>
 </template>
 
