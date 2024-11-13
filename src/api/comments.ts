@@ -12,11 +12,21 @@ export class CommentsAPI {
     })
   }
 
-  static publishComments (data:CommentsForms) {
+  static publishComments (data: CommentsForms) {
     return request<any, Pagination<CommentsVo>>({
       url: `${COMMENTS_BASE_URL}/publish/`,
       method: 'post',
       data,
+    })
+  }
+
+  static getCommentsTotal (articleId: number) {
+    return request<any, TotalVo>({
+      url: `${COMMENTS_BASE_URL}/total/`,
+      method: 'get',
+      params: {
+        article_id: articleId,
+      },
     })
   }
 }
@@ -42,10 +52,14 @@ export interface CommentsParams {
 
 export interface CommentsForms {
   article_pk: number;
-  nickname:string;
-  avatar:string;
-  email:string;
-  content:string;
+  nickname: string;
+  avatar: string;
+  email: string;
+  content: string;
   parent_comment: number | null;
   notification: boolean;
+}
+
+export interface TotalVo {
+  total: number;
 }

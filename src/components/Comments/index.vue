@@ -19,6 +19,8 @@
   const { mobile } = useDisplay()
   // 当前分页
   const page = ref<number>(1)
+  // 总数
+  const total = ref<number>(0)
   // 回复框显示的位置
   const replyIndex = ref<number>(0)
   // 回复框回复的用户名
@@ -47,6 +49,8 @@
       page: 1,
       article_pk: props.articleId,
     })
+    const response = await CommentsAPI.getCommentsTotal(props.articleId)
+    total.value = response.total || 0
   })
 
   const comments_length = computed(() => {
@@ -236,27 +240,18 @@
       </v-row>
     </div>
     <v-row no-gutters>
-      <h3 v-show="comments_length > 0">评论列表 | 共 {{ comments_length }} 条评论</h3>
+      <h3 v-show="comments_length > 0">评论列表 | 共 {{ total }} 条评论</h3>
     </v-row>
     <v-divider />
     <div v-if="loading" id="loading-box" class="d-flex justify-center align-center" style="min-height: 300px">
       <v-progress-circular color="primary" indeterminate :size="76" />
     </div>
-    <!--    <v-overlay-->
-    <!--      class="align-center justify-center"-->
-    <!--      :model-value="loading"-->
-    <!--    >-->
-    <!--      <v-progress-circular-->
-    <!--        color="primary"-->
-    <!--        indeterminate-->
-    <!--        size="64"-->
-    <!--      />-->
-    <!--    </v-overlay>-->
     <v-empty-state
       v-show="!loading && comments_length === 0"
-      icon="mdi-magnify"
-      text="赶紧来抢占沙发吧"
-      title="暂无评论"
+      icon="mdi-comment"
+      style="min-height: 300px"
+      text="快来抢占沙发吧"
+      title="暂无评论呢"
     />
     <v-list v-if="!loading" class="comments">
       <v-list-item v-for="comment in commentsPagination.results" :key="comment.id" class="mb-2 comment">
