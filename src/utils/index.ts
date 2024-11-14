@@ -69,7 +69,9 @@ export function formattedTimeDisplay (isoTime:string) {
   const pastTime = new Date(isoTime)
   const timeDifference = (now - pastTime) / 1000 / 60 // 计算时间差（分钟）
 
-  if (timeDifference < 30) {
+  if (timeDifference > 0 && timeDifference < 5) {
+    return '刚刚'
+  } else if (timeDifference < 30) {
     return `${Math.floor(timeDifference)} 分钟前`
   } else {
     // 格式化原始时间为可读格式
@@ -79,6 +81,6 @@ export function formattedTimeDisplay (isoTime:string) {
     const hours = String(pastTime.getHours()).padStart(2, '0')
     const minutes = String(pastTime.getMinutes()).padStart(2, '0')
     const seconds = String(pastTime.getSeconds()).padStart(2, '0')
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    return `${year}-${month}-${day} ${hours}:${minutes}`
   }
 }

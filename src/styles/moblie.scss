@@ -1,0 +1,58 @@
+@media (max-width: 575px) {
+  .xs-100 {
+    flex: 1 1 100%;
+  }
+  .xs-80 {
+    flex: 1 1 80%;
+  }
+  .xs-50 {
+    flex: 1 1 50%;
+    max-width: 50%;
+  }
+  .xs-33 {
+    flex: 1 1 33%;
+  }
+  .xs-25 {
+    flex: 1 1 25%;
+  }
+  .xs-20 {
+    flex: 1 1 20%;
+  }
+
+  .xs-12 {
+    flex: 1 1 100%;
+  }
+  .xs-6 {
+    flex: 1 1 50%;
+  }
+
+  .xs-4 {
+    flex: 1 1 33%;
+  }
+
+  .xs-3 {
+    flex: 1 1 25%;
+  }
+
+  .justify-xs-space-between {
+    justify-content: space-between;
+  }
+
+  .flex-xs-column {
+    flex-direction: column;
+  }
+
+  .xs-font-size {
+    font-size: 14px;
+  }
+
+  .xs-font-hidden {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; /* 限制显示的行数 */
+    overflow: hidden; /* 隐藏超出部分 */
+    text-overflow: ellipsis; /* 显示省略号（虽然这里不起直接作用，但习惯上写上） */
+    max-width: 2.9rem; /* 设置特定的宽度 */
+    width: auto;
+  }
+}

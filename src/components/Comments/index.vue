@@ -6,6 +6,7 @@
   import { formattedTimeDisplay } from '@/utils'
   import { Toast } from '@/utils/toast'
   import { useDisplay } from 'vuetify'
+
   const frontSetting = useFrontSettings()
   // 接收文章Id
   const props = defineProps({
@@ -88,10 +89,10 @@
     commentsForms.email = ''
   }
   // 扁平化评论
-  const flattenReplyComments = (comments:CommentsVo[]) => {
-    const result:CommentsVo[] = []
+  const flattenReplyComments = (comments: CommentsVo[]) => {
+    const result: CommentsVo[] = []
 
-    function flatten (arr:CommentsVo[]) {
+    function flatten (arr: CommentsVo[]) {
       arr.forEach(comment => {
         result.push(comment) // 将当前层的评论添加到结果数组中
         if (comment.reply_comments && comment.reply_comments.length > 0) {
@@ -105,7 +106,7 @@
     return result
   }
 
-  const reply = (index:number, id:number | null, nickname?:string) => {
+  const reply = (index: number, id: number | null, nickname?: string) => {
     resetForm()
     replyIndex.value = index
     replyId.value = id
@@ -134,6 +135,7 @@
           page: page.value,
           article_pk: props.articleId,
         })
+        total.value = total.value + 1
         resetForm()
       } else {
         Toast.error('发表评论失败，请联系管理员')
@@ -154,6 +156,7 @@
       return false
     }
   }
+
   function validateForm (form: CommentsForms): string | null {
     const trimmedNickname = form.nickname.trim()
     const trimmedContent = form.content.trim()
@@ -194,38 +197,41 @@
           max-rows="3"
         />
       </v-row>
-      <v-row class="px-0 mx-0">
-        <v-col :lg="4">
+      <v-row class="px-0 mb-0">
+        <v-col class="xs-100" :lg="4" :xs="12">
           <v-text-field
             v-model="commentsForms.nickname"
             density="compact"
+            hide-details
             label="请输入昵称"
             prepend-inner-icon="mdi-account"
             variant="outlined"
           />
         </v-col>
-        <v-col :lg="4">
+        <v-col class="xs-100" :lg="4" :xs="12">
           <v-text-field
             v-model="commentsForms.avatar"
             density="compact"
+            hide-details
             label="请输入头像链接"
             prepend-inner-icon="mdi-camera"
             variant="outlined"
           />
         </v-col>
-        <v-col :lg="4">
+        <v-col class="xs-100" :lg="4" :xs="12">
           <v-text-field
             v-model="commentsForms.email"
             density="compact"
+            hide-details
             label="请输入邮箱"
             prepend-inner-icon="mdi-email"
             variant="outlined"
           />
         </v-col>
       </v-row>
-      <v-row class="d-flex align-center py-0 my-0" no-gutters>
+      <v-row class="d-flex align-center  py-0 mb-4" no-gutters>
         <v-spacer />
-        <v-col :lg="3">
+        <v-col class="xs-25" :lg="3">
           <v-switch
             v-model="commentsForms.notification"
             color="primary"
@@ -234,7 +240,7 @@
             label="订阅回复"
           />
         </v-col>
-        <v-col :lg="2">
+        <v-col class="xs-25 d-flex justify-end" :lg="2">
           <v-btn color="blue-darken-4" density="default" @click="publish">发送评论</v-btn>
         </v-col>
       </v-row>
@@ -254,9 +260,9 @@
       title="暂无评论呢"
     />
     <v-list v-if="!loading" class="comments">
-      <v-list-item v-for="comment in commentsPagination.results" :key="comment.id" class="mb-2 comment">
+      <v-list-item v-for="comment in commentsPagination.results" :key="comment.id" class="mb-2 comment pa-0">
         <v-row no-gutters>
-          <v-col :lg="1" :md="1">
+          <v-col class="xs-20" :lg="1" :md="1">
             <v-avatar
               size="42px"
             >
@@ -266,10 +272,17 @@
               />
             </v-avatar>
           </v-col>
-          <v-col :lg="11" :md="11">
+          <v-col class="xs-80" :lg="11" :md="11">
             <v-row class="d-flex align-center" no-gutters>
               <v-col class="d-flex align-center">
-                <h4 class="nickname mr-2">{{ comment.nickname }}{{ comment.admin_comment ? '（作者）' : '' }}</h4>
+
+                <v-tooltip open-on-click :open-on-hover="false" :text="comment.nickname">
+                  <template #activator="{ props }">
+                    <h4 class="nickname mr-2 xs-font-hidden" v-bind="props">{{ comment.nickname }}{{
+                      comment.admin_comment ? '（作者）' : ''
+                    }}</h4>
+                  </template>
+                </v-tooltip>
                 <span class="datetime text-sm-body-2 text-grey-darken-1 mr-5">{{ formattedTimeDisplay(comment.create_time) }}</span>
               </v-col>
             </v-row>
@@ -282,8 +295,16 @@
             </v-row>
             <v-row class="mt-1" no-gutters>
               <v-col>
-                <v-btn v-if="replyId === comment.id" color="blue-darken-4" size="x-small" @click="cancelReply">取消回复</v-btn>
-                <v-btn v-else color="blue-darken-4" size="x-small" @click="reply(comment.id,comment.id,comment.nickname)">回复</v-btn>
+                <v-btn v-if="replyId === comment.id" color="blue-darken-4" size="x-small" @click="cancelReply">
+                  取消回复
+                </v-btn>
+                <v-btn
+                  v-else
+                  color="blue-darken-4"
+                  size="x-small"
+                  @click="reply(comment.id,comment.id,comment.nickname)"
+                >回复
+                </v-btn>
               </v-col>
             </v-row>
           </v-col>
@@ -291,10 +312,10 @@
         <!--子评论-->
         <v-list class="replyComments">
           <v-list-item v-for="replyComment in flattenReplyComments(comment.reply_comments)" :key="replyComment.id">
-            <v-row class="bg-grey-lighten-4 border py-2 px-2" no-gutters>
+            <v-row class="bg-grey-lighten-4 border py-2 pl-2" no-gutters>
               <v-col :lg="12" :md="11">
                 <v-row no-gutters>
-                  <v-col :lg="1" :md="1">
+                  <v-col class="xs-20" :lg="1" :md="1">
                     <v-avatar
                       size="42px"
                     >
@@ -304,24 +325,42 @@
                       />
                     </v-avatar>
                   </v-col>
-                  <v-col :lg="11" :md="11">
+                  <v-col class="xs-80" :lg="11" :md="11">
                     <v-row class="d-flex align-center" no-gutters>
                       <v-col class="d-flex align-center">
-                        <h4 class="nickname mr-2">{{ replyComment.nickname }}</h4>
+                        <v-tooltip open-on-click :open-on-hover="false" :text="replyComment.nickname">
+                          <template #activator="{ props }">
+                            <h4 class="nickname mr-2 xs-font-hidden" v-bind="props">{{ replyComment.nickname }}</h4>
+                          </template>
+                        </v-tooltip>
                         <span class="datetime text-sm-body-2 text-grey-darken-1 mr-5">{{ formattedTimeDisplay(replyComment.create_time) }}</span>
                       </v-col>
                     </v-row>
                     <v-row no-gutters>
                       <v-col>
                         <span class="text-sm-body-1 text-grey-darken-3">
-                          @{{ replyComment.parent_comment_nickname }}：{{ replyComment.content }}
+                          <span class="text-blue-accent-2">@{{
+                            replyComment.parent_comment_nickname
+                          }}</span>：{{ replyComment.content }}
                         </span>
                       </v-col>
                     </v-row>
                     <v-row class="mt-1" no-gutters>
                       <v-col>
-                        <v-btn v-if="replyId === replyComment.id" color="blue-darken-4" size="x-small" @click="cancelReply">取消回复</v-btn>
-                        <v-btn v-else color="blue-darken-4" size="x-small" @click="reply(comment.id,replyComment.id,replyComment.nickname)">回复</v-btn>
+                        <v-btn
+                          v-if="replyId === replyComment.id"
+                          color="blue-darken-4"
+                          size="x-small"
+                          @click="cancelReply"
+                        >取消回复
+                        </v-btn>
+                        <v-btn
+                          v-else
+                          color="blue-darken-4"
+                          size="x-small"
+                          @click="reply(comment.id,replyComment.id,replyComment.nickname)"
+                        >回复
+                        </v-btn>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -347,37 +386,40 @@
             />
           </v-row>
           <v-row class="px-0 mx-0">
-            <v-col :lg="4">
+            <v-col class="xs-100" :lg="4">
               <v-text-field
                 v-model="commentsForms.nickname"
                 density="compact"
+                hide-details
                 label="请输入昵称"
                 prepend-inner-icon="mdi-account"
                 variant="outlined"
               />
             </v-col>
-            <v-col :lg="4">
+            <v-col class="xs-100" :lg="4">
               <v-text-field
                 v-model="commentsForms.avatar"
                 density="compact"
+                hide-details
                 label="请输入头像链接"
                 prepend-inner-icon="mdi-camera"
                 variant="outlined"
               />
             </v-col>
-            <v-col :lg="4">
+            <v-col class="xs-100" :lg="4">
               <v-text-field
                 v-model="commentsForms.email"
                 density="compact"
+                hide-details
                 label="请输入邮箱"
                 prepend-inner-icon="mdi-email"
                 variant="outlined"
               />
             </v-col>
           </v-row>
-          <v-row class="d-flex align-center py-0 my-0" no-gutters>
+          <v-row class="d-flex align-center py-0 my-1" no-gutters>
             <v-spacer />
-            <v-col :lg="3">
+            <v-col class="xs-25" :lg="3">
               <v-switch
                 v-model="commentsForms.notification"
                 color="primary"
@@ -386,7 +428,7 @@
                 label="订阅回复"
               />
             </v-col>
-            <v-col :lg="2">
+            <v-col class="xs-25 d-flex justify-end px-3" :lg="2">
               <v-btn color="blue-darken-4" density="default" @click="publish">发送评论</v-btn>
             </v-col>
           </v-row>
@@ -404,7 +446,10 @@
 </template>
 
 <style scoped lang="scss">
+@import "@/styles/moblie";
+
 .container {
   padding: 0 10px;
 }
+
 </style>

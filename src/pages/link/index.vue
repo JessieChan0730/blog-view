@@ -124,6 +124,7 @@
             <v-col
               v-for="link in links"
               :key="link.id"
+              class="xs-50"
               :cols="12"
               :lg="4"
               :md="4"
@@ -215,14 +216,15 @@
         </v-card-item>
         <v-divider color="#00b5ad" opacity="100" :thickness="2" />
       </v-card>
-<!--            <v-card v-else class="w-100">-->
-<!--              <NetWorkError :retry-fun="initData" />-->
-<!--            </v-card>-->
+      <!--            <v-card v-else class="w-100">-->
+      <!--              <NetWorkError :retry-fun="initData" />-->
+      <!--            </v-card>-->
     </template>
   </Container>
 </template>
 
 <style scoped lang="scss">
+@import "@/styles/moblie";
 .rounded-circle {
   border-radius: 50%;
   overflow: hidden; /* 确保图片不会溢出圆形边界 */
