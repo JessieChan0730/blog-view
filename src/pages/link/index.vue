@@ -137,7 +137,7 @@
                 </v-card-item>
                 <v-card-item>
                   <div>
-                    <div class="text-h6 text-center mb-1">
+                    <div class="text-h6 text-center mb-1 xs-font-hidden">
                       {{ link.name }}
                     </div>
                     <div class="text-caption text-center text-ellipsis">{{ link.intro }}</div>
@@ -242,5 +242,18 @@
 .statement{
   line-height: 1.8rem;
   padding: 0 1.5rem;
+}
+
+@media (max-width: 575px) {
+  .xs-font-hidden {
+    text-align: center;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; /* 限制显示的行数 */
+    overflow: hidden; /* 隐藏超出部分 */
+    text-overflow: unset;
+    max-width: 10rem; /* 设置特定的宽度 */
+    width: auto;
+  }
 }
 </style>

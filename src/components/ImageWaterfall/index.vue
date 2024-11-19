@@ -119,7 +119,11 @@
 
   const share = async (url: string) => {
     try {
-      await navigator.clipboard.writeText(url)
+      const hostname = window.location.hostname
+      const protocol = window.location.protocol
+      const port = window.location.port
+      const staticPrefix = import.meta.env.VITE_APP_STATIC_URL
+      await navigator.clipboard.writeText(`${protocol}//${hostname}:${port}${staticPrefix}/${url}`)
       Toast.success('复制图片链接成功')
     } catch (e) {
       // 如果现代API不可用，尝试使用老方法
