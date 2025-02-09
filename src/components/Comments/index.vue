@@ -54,10 +54,10 @@
     total.value = response.total || 0
   })
 
-  const comments_length = computed(() => {
+  const commentsLength = computed(() => {
     return flattenReplyComments(commentsPagination.results).length
   })
-  const page_length = computed(() => {
+  const pageLength = computed(() => {
     return Math.ceil(commentsPagination.count / Number(frontSetting.frontSetting.comments.page_size.value))
   })
 
@@ -69,7 +69,7 @@
     if (mobile.value) {
       useScroll(0)
     } else {
-      useScroll(1014)
+      useScroll(780)
     }
   })
 
@@ -150,6 +150,7 @@
 
   const isValidUrl = (url: string): boolean => {
     try {
+      // eslint-disable-next-line no-new
       new URL(url)
       return true
     } catch (_) {
@@ -246,14 +247,14 @@
       </v-row>
     </div>
     <v-row no-gutters>
-      <h3 v-show="comments_length > 0">评论列表 | 共 {{ total }} 条评论</h3>
+      <h3 v-show="commentsLength > 0">评论列表 | 共 {{ total }} 条评论</h3>
     </v-row>
     <v-divider />
     <div v-if="loading" id="loading-box" class="d-flex justify-center align-center" style="min-height: 300px">
       <v-progress-circular color="primary" indeterminate :size="76" />
     </div>
     <v-empty-state
-      v-show="!loading && comments_length === 0"
+      v-show="!loading && commentsLength === 0"
       icon="mdi-comment"
       style="min-height: 300px"
       text="快来抢占沙发吧"
@@ -276,11 +277,10 @@
             <v-row class="d-flex align-center" no-gutters>
               <v-col class="d-flex align-center">
 
-                <v-tooltip open-on-click :open-on-hover="false" :text="comment.nickname">
+                <v-tooltip open-on-click :open-on-hover="false" :text="`${comment.nickname}${comment.admin_comment ? '（作者）' : ''}`">
                   <template #activator="{ props }">
-                    <h4 class="nickname mr-2 xs-font-hidden" v-bind="props">{{ comment.nickname }}{{
-                      comment.admin_comment ? '（作者）' : ''
-                    }}</h4>
+                    <h4 class="nickname mr-2 xs-font-hidden cursor-pointer" v-bind="props">{{ comment.nickname }}
+                      {{ comment.admin_comment ? '（作者）' : '' }}</h4>
                   </template>
                 </v-tooltip>
                 <span class="datetime text-sm-body-2 text-grey-darken-1 mr-5">{{ formattedTimeDisplay(comment.create_time) }}</span>
@@ -328,9 +328,9 @@
                   <v-col class="xs-80" :lg="11" :md="11">
                     <v-row class="d-flex align-center" no-gutters>
                       <v-col class="d-flex align-center">
-                        <v-tooltip open-on-click :open-on-hover="false" :text="replyComment.nickname">
+                        <v-tooltip open-on-click :open-on-hover="false" :text="`${replyComment.nickname}${replyComment.admin_comment ? '（作者）' : ''}`">
                           <template #activator="{ props }">
-                            <h4 class="nickname mr-2 xs-font-hidden" v-bind="props">{{ replyComment.nickname }}</h4>
+                            <h4 class="nickname mr-2 xs-font-hidden cursor-pointer" v-bind="props">{{ replyComment.nickname }}{{ replyComment.admin_comment ? '（作者）' : '' }}</h4>
                           </template>
                         </v-tooltip>
                         <span class="datetime text-sm-body-2 text-grey-darken-1 mr-5">{{ formattedTimeDisplay(replyComment.create_time) }}</span>
@@ -436,10 +436,10 @@
       </v-list-item>
     </v-list>
     <v-pagination
-      v-show="!loading && comments_length > 0"
+      v-show="!loading && commentsLength > 0"
       v-model="page"
       class="mx-auto"
-      :length="page_length"
+      :length="pageLength"
       total-visible="5"
     />
   </div>
